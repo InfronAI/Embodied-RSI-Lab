@@ -1,0 +1,1774 @@
+{
+  "schema_version": 1,
+  "episodes": [
+    {
+      "run_id": "explore-20261021-121553-a8dac7",
+      "episode_id": "9607fc151f5d88c5f463",
+      "task": "transfer",
+      "success": true,
+      "source": "captured_poses",
+      "scene_hash": "a57a160d9f21e7329be5e982f38fa6ac88712344bb602df88898fd4ec8d31d77",
+      "included_in_shown_training_dataset": false,
+      "observation_mode": "rgbd",
+      "model_version": "deploy-20261020-005142-77e932",
+      "wall_seconds": 37.23112011491321,
+      "records": [
+        {
+          "step": 0,
+          "choice": "descend",
+          "candidates": [
+            "grasp",
+            "approach",
+            "recover",
+            "descend",
+            "lift"
+          ],
+          "model_probabilities": [
+            0.007898584939539433,
+            0.25217121839523315,
+            0.04223538190126419,
+            0.6703806519508362,
+            0.027314186096191406
+          ],
+          "sampling_probabilities": [
+            0.022412881492495325,
+            0.2648073396363656,
+            0.034656131186430114,
+            0.6297771045447544,
+            0.04834654313995462
+          ],
+          "latency_ms": 53.72503201942891,
+          "executed": true,
+          "rejection": null,
+          "stage": "acquire",
+          "observation": {
+            "tcp": [
+              0.37997,
+              -0.07999,
+              0.22001
+            ],
+            "object": [
+              0.45319,
+              -0.17833,
+              0.01988
+            ],
+            "destination": [
+              0.44024,
+              0.19439,
+              0.026
+            ],
+            "gripper": "open",
+            "held": false,
+            "grasp_secured": false
+          },
+          "sim_time_before": 0.0,
+          "sim_time_after": 0.8
+        },
+        {
+          "step": 1,
+          "choice": "grasp",
+          "candidates": [
+            "lift",
+            "recover",
+            "grasp",
+            "approach",
+            "descend"
+          ],
+          "model_probabilities": [
+            0.004872509744018316,
+            0.023080740123987198,
+            0.49127912521362305,
+            0.04033403471112251,
+            0.4404335618019104
+          ],
+          "sampling_probabilities": [
+            0.019713109993011138,
+            0.04994353544332634,
+            0.5344488207826923,
+            0.07076723953982672,
+            0.3251272942411436
+          ],
+          "latency_ms": 53.000027080997825,
+          "executed": true,
+          "rejection": null,
+          "stage": "acquire",
+          "observation": {
+            "tcp": [
+              0.45296,
+              -0.17668,
+              0.02325
+            ],
+            "object": [
+              0.45319,
+              -0.17833,
+              0.01988
+            ],
+            "destination": [
+              0.44024,
+              0.19439,
+              0.026
+            ],
+            "gripper": "open",
+            "held": false,
+            "grasp_secured": false
+          },
+          "sim_time_before": 0.8,
+          "sim_time_after": 1.45
+        },
+        {
+          "step": 2,
+          "choice": "lift",
+          "candidates": [
+            "approach",
+            "recover",
+            "lift",
+            "grasp",
+            "descend"
+          ],
+          "model_probabilities": [
+            0.03442414477467537,
+            0.03086349181830883,
+            0.6839197278022766,
+            0.05148864910006523,
+            0.1993039846420288
+          ],
+          "sampling_probabilities": [
+            0.032507829582346506,
+            0.025266759809552307,
+            0.6635820833412668,
+            0.042455376586032864,
+            0.23618795068080153
+          ],
+          "latency_ms": 53.46123408526182,
+          "executed": true,
+          "rejection": null,
+          "stage": "acquire",
+          "observation": {
+            "tcp": [
+              0.45292,
+              -0.1767,
+              0.02316
+            ],
+            "object": [
+              0.45319,
+              -0.17833,
+              0.01988
+            ],
+            "destination": [
+              0.44024,
+              0.19439,
+              0.026
+            ],
+            "gripper": "closed",
+            "held": true,
+            "grasp_secured": true
+          },
+          "sim_time_before": 1.45,
+          "sim_time_after": 2.55
+        },
+        {
+          "step": 3,
+          "choice": "carry",
+          "candidates": [
+            "recover",
+            "grasp",
+            "lower",
+            "lift",
+            "carry"
+          ],
+          "model_probabilities": [
+            0.009959766641259193,
+            0.06512545794248581,
+            0.10448229312896729,
+            0.4579337537288666,
+            0.3624987006187439
+          ],
+          "sampling_probabilities": [
+            0.024622634932021936,
+            0.04487460674828178,
+            0.13388529469375143,
+            0.4847204099005387,
+            0.31189705372540605
+          ],
+          "latency_ms": 87.14624401181936,
+          "executed": true,
+          "rejection": null,
+          "stage": "transport",
+          "observation": {
+            "tcp": [
+              0.4529,
+              -0.17659,
+              0.21973
+            ],
+            "object": [
+              0.45317,
+              -0.17822,
+              0.21645
+            ],
+            "destination": [
+              0.44024,
+              0.19439,
+              0.026
+            ],
+            "gripper": "closed",
+            "held": true,
+            "grasp_secured": true
+          },
+          "sim_time_before": 2.55,
+          "sim_time_after": 4.15
+        },
+        {
+          "step": 4,
+          "choice": "lower",
+          "candidates": [
+            "grasp",
+            "withdraw",
+            "carry",
+            "lower",
+            "recover",
+            "release"
+          ],
+          "model_probabilities": [
+            0.012284142896533012,
+            0.1639167219400406,
+            0.07871413230895996,
+            0.524795651435852,
+            0.014314908534288406,
+            0.20597442984580994
+          ],
+          "sampling_probabilities": [
+            0.031449816561602346,
+            0.19990007661396308,
+            0.10674595102181376,
+            0.5600862427995427,
+            0.016942563691135767,
+            0.08487534931194228
+          ],
+          "latency_ms": 53.773465915583074,
+          "executed": true,
+          "rejection": null,
+          "stage": "place",
+          "observation": {
+            "tcp": [
+              0.44005,
+              0.19583,
+              0.21991
+            ],
+            "object": [
+              0.44032,
+              0.1942,
+              0.21663
+            ],
+            "destination": [
+              0.44024,
+              0.19439,
+              0.026
+            ],
+            "gripper": "closed",
+            "held": true,
+            "grasp_secured": true
+          },
+          "sim_time_before": 4.15,
+          "sim_time_after": 5.35
+        },
+        {
+          "step": 5,
+          "choice": "release",
+          "candidates": [
+            "withdraw",
+            "grasp",
+            "release",
+            "recover",
+            "carry",
+            "lower"
+          ],
+          "model_probabilities": [
+            0.16418348252773285,
+            0.004931315779685974,
+            0.5524418354034424,
+            0.015815705060958862,
+            0.0350116603076458,
+            0.22761599719524384
+          ],
+          "sampling_probabilities": [
+            0.1492806612801194,
+            0.01574099054523924,
+            0.5032611822587958,
+            0.02970287412320933,
+            0.05234262877138775,
+            0.24967166302124844
+          ],
+          "latency_ms": 91.3790890481323,
+          "executed": true,
+          "rejection": null,
+          "stage": "place",
+          "observation": {
+            "tcp": [
+              0.43972,
+              0.196,
+              0.03172
+            ],
+            "object": [
+              0.43999,
+              0.19437,
+              0.02844
+            ],
+            "destination": [
+              0.44024,
+              0.19439,
+              0.026
+            ],
+            "gripper": "closed",
+            "held": true,
+            "grasp_secured": true
+          },
+          "sim_time_before": 5.35,
+          "sim_time_after": 6.15
+        },
+        {
+          "step": 6,
+          "choice": "withdraw",
+          "candidates": [
+            "lower",
+            "release",
+            "carry",
+            "grasp",
+            "withdraw",
+            "recover"
+          ],
+          "model_probabilities": [
+            0.021155230700969696,
+            0.13241995871067047,
+            0.02676006592810154,
+            0.3859895169734955,
+            0.42796590924263,
+            0.00570925185456872
+          ],
+          "sampling_probabilities": [
+            0.03638121684345629,
+            0.15693491866442097,
+            0.0430621887952271,
+            0.30674537718337813,
+            0.4400163997772856,
+            0.01685989873623179
+          ],
+          "latency_ms": 54.11631299648434,
+          "executed": true,
+          "rejection": null,
+          "stage": "place",
+          "observation": {
+            "tcp": [
+              0.43972,
+              0.196,
+              0.03172
+            ],
+            "object": [
+              0.43999,
+              0.19437,
+              0.02844
+            ],
+            "destination": [
+              0.44024,
+              0.19439,
+              0.026
+            ],
+            "gripper": "open",
+            "held": false,
+            "grasp_secured": false
+          },
+          "sim_time_before": 6.15,
+          "sim_time_after": 7.15
+        }
+      ],
+      "pose_sha256": "d18cc57ca69dbd7f1d6f42729a501e7b48053732060eae67ffe0e376f5a04bce",
+      "frame_count": 181,
+      "simulated_seconds": 7.1499999999993795
+    },
+    {
+      "run_id": "explore-20261020-191242-e464ab",
+      "episode_id": "d1a60067c34c32b5995b",
+      "task": "transfer",
+      "success": true,
+      "source": "captured_poses",
+      "scene_hash": "df6eab16734eac8f914ccb2d9eae64a613e4956b59afdd9022d62f722b58d3cb",
+      "included_in_shown_training_dataset": true,
+      "observation_mode": "privileged",
+      "model_version": "deploy-20261020-005142-77e932",
+      "wall_seconds": 36.010119208018295,
+      "records": [
+        {
+          "step": 0,
+          "choice": "descend",
+          "candidates": [
+            "grasp",
+            "approach",
+            "lift",
+            "descend",
+            "recover"
+          ],
+          "model_probabilities": [
+            0.009128361009061337,
+            0.291433185338974,
+            0.020558055490255356,
+            0.632491946220398,
+            0.0463884212076664
+          ],
+          "sampling_probabilities": [
+            0.0152093012746405,
+            0.3046559720552366,
+            0.02707773852581747,
+            0.601373012986999,
+            0.0516839751573065
+          ],
+          "latency_ms": 1864.2661250196397,
+          "executed": true,
+          "rejection": null,
+          "stage": "acquire",
+          "observation": {
+            "tcp": [
+              0.37997,
+              -0.07999,
+              0.22001
+            ],
+            "object": [
+              0.43042,
+              -0.18489,
+              0.01988
+            ],
+            "destination": [
+              0.44018909916259613,
+              0.16524441341310456,
+              0.026
+            ],
+            "gripper": "open",
+            "held": false,
+            "grasp_secured": false
+          },
+          "sim_time_before": 0.0,
+          "sim_time_after": 0.8
+        },
+        {
+          "step": 1,
+          "choice": "grasp",
+          "candidates": [
+            "recover",
+            "lift",
+            "descend",
+            "grasp",
+            "approach"
+          ],
+          "model_probabilities": [
+            0.015086253173649311,
+            0.007280778605490923,
+            0.19694893062114716,
+            0.7111639380455017,
+            0.06952010840177536
+          ],
+          "sampling_probabilities": [
+            0.019252405578888927,
+            0.02098769302175437,
+            0.1965964194353388,
+            0.670364960376167,
+            0.09279852158785101
+          ],
+          "latency_ms": 847.7898749988526,
+          "executed": true,
+          "rejection": null,
+          "stage": "acquire",
+          "observation": {
+            "tcp": [
+              0.43027,
+              -0.18304,
+              0.02328
+            ],
+            "object": [
+              0.43042,
+              -0.18489,
+              0.01988
+            ],
+            "destination": [
+              0.44018909916259613,
+              0.16524441341310456,
+              0.026
+            ],
+            "gripper": "open",
+            "held": false,
+            "grasp_secured": false
+          },
+          "sim_time_before": 0.8,
+          "sim_time_after": 1.45
+        },
+        {
+          "step": 2,
+          "choice": "lift",
+          "candidates": [
+            "approach",
+            "lift",
+            "grasp",
+            "recover",
+            "descend"
+          ],
+          "model_probabilities": [
+            0.04191633313894272,
+            0.6105800867080688,
+            0.09036356210708618,
+            0.020954357460141182,
+            0.2361857146024704
+          ],
+          "sampling_probabilities": [
+            0.025287314054324547,
+            0.6859802406736594,
+            0.07747244440023557,
+            0.01997865970945582,
+            0.19128134116232473
+          ],
+          "latency_ms": 572.2943750442937,
+          "executed": true,
+          "rejection": null,
+          "stage": "acquire",
+          "observation": {
+            "tcp": [
+              0.43023,
+              -0.18306,
+              0.0232
+            ],
+            "object": [
+              0.43044,
+              -0.18305,
+              0.02094
+            ],
+            "destination": [
+              0.44018909916259613,
+              0.16524441341310456,
+              0.026
+            ],
+            "gripper": "closed",
+            "held": true,
+            "grasp_secured": true
+          },
+          "sim_time_before": 1.45,
+          "sim_time_after": 2.55
+        },
+        {
+          "step": 3,
+          "choice": "carry",
+          "candidates": [
+            "carry",
+            "lift",
+            "grasp",
+            "recover",
+            "lower"
+          ],
+          "model_probabilities": [
+            0.5434989929199219,
+            0.16648021340370178,
+            0.11620950698852539,
+            0.02484780177474022,
+            0.14896343648433685
+          ],
+          "sampling_probabilities": [
+            0.5256907652625354,
+            0.17459045873849355,
+            0.09987273573177351,
+            0.027751060976670114,
+            0.17209497929052736
+          ],
+          "latency_ms": 2625.2236659638584,
+          "executed": true,
+          "rejection": null,
+          "stage": "transport",
+          "observation": {
+            "tcp": [
+              0.43039,
+              -0.18304,
+              0.21965
+            ],
+            "object": [
+              0.43154,
+              -0.18304,
+              0.21754
+            ],
+            "destination": [
+              0.44018909916259613,
+              0.16524441341310456,
+              0.026
+            ],
+            "gripper": "closed",
+            "held": true,
+            "grasp_secured": true
+          },
+          "sim_time_before": 2.55,
+          "sim_time_after": 4.15
+        },
+        {
+          "step": 4,
+          "choice": "lower",
+          "candidates": [
+            "grasp",
+            "recover",
+            "lower",
+            "carry",
+            "withdraw",
+            "release"
+          ],
+          "model_probabilities": [
+            0.012082919478416443,
+            0.020584966987371445,
+            0.32407087087631226,
+            0.20712821185588837,
+            0.28692033886909485,
+            0.14921274781227112
+          ],
+          "sampling_probabilities": [
+            0.015214908487253884,
+            0.016145131750014075,
+            0.3691106391231854,
+            0.2502185746023605,
+            0.29905053356853656,
+            0.05026021246864955
+          ],
+          "latency_ms": 3015.6203330261633,
+          "executed": true,
+          "rejection": null,
+          "stage": "place",
+          "observation": {
+            "tcp": [
+              0.43904,
+              0.16514,
+              0.21994
+            ],
+            "object": [
+              0.44261,
+              0.16514,
+              0.21596
+            ],
+            "destination": [
+              0.44018909916259613,
+              0.16524441341310456,
+              0.026
+            ],
+            "gripper": "closed",
+            "held": true,
+            "grasp_secured": true
+          },
+          "sim_time_before": 4.15,
+          "sim_time_after": 5.35
+        },
+        {
+          "step": 5,
+          "choice": "release",
+          "candidates": [
+            "withdraw",
+            "recover",
+            "grasp",
+            "lower",
+            "carry",
+            "release"
+          ],
+          "model_probabilities": [
+            0.133668452501297,
+            0.010743383318185806,
+            0.003519139252603054,
+            0.2967963218688965,
+            0.06731021404266357,
+            0.487962543964386
+          ],
+          "sampling_probabilities": [
+            0.15495932026382514,
+            0.02413835494560282,
+            0.011349686843849478,
+            0.23201571494806578,
+            0.09070689224012436,
+            0.4868300307585325
+          ],
+          "latency_ms": 4787.459375103936,
+          "executed": true,
+          "rejection": null,
+          "stage": "place",
+          "observation": {
+            "tcp": [
+              0.43657,
+              0.16529,
+              0.03224
+            ],
+            "object": [
+              0.44039,
+              0.16529,
+              0.02672
+            ],
+            "destination": [
+              0.44018909916259613,
+              0.16524441341310456,
+              0.026
+            ],
+            "gripper": "closed",
+            "held": true,
+            "grasp_secured": true
+          },
+          "sim_time_before": 5.35,
+          "sim_time_after": 6.15
+        },
+        {
+          "step": 6,
+          "choice": "withdraw",
+          "candidates": [
+            "carry",
+            "lower",
+            "grasp",
+            "withdraw",
+            "release",
+            "recover"
+          ],
+          "model_probabilities": [
+            0.021066350862383842,
+            0.10024310648441315,
+            0.039341215044260025,
+            0.6783749461174011,
+            0.11386798322200775,
+            0.04710646718740463
+          ],
+          "sampling_probabilities": [
+            0.036297119879480026,
+            0.11981583291702937,
+            0.056044002973603645,
+            0.6241006121457607,
+            0.09859163625288372,
+            0.06515079583124246
+          ],
+          "latency_ms": 9177.735333913006,
+          "executed": true,
+          "rejection": null,
+          "stage": "place",
+          "observation": {
+            "tcp": [
+              0.43657,
+              0.16529,
+              0.03223
+            ],
+            "object": [
+              0.43951,
+              0.16528,
+              0.02588
+            ],
+            "destination": [
+              0.44018909916259613,
+              0.16524441341310456,
+              0.026
+            ],
+            "gripper": "open",
+            "held": false,
+            "grasp_secured": false
+          },
+          "sim_time_before": 6.15,
+          "sim_time_after": 7.15
+        }
+      ],
+      "pose_sha256": "8fe1d0b00708d38f5621e2b5a6ed00fe0a36b33ffc0121a1491292ac8faae393",
+      "frame_count": 181,
+      "simulated_seconds": 7.1499999999993795
+    }
+  ],
+  "training": {
+    "run_id": "self-train-20261020-231554-609aef",
+    "source": "optimizer_snapshots",
+    "trainable_tensors": 12,
+    "trainable_parameters": 7348225,
+    "frozen_parameters": 752393024,
+    "frozen_changed": false,
+    "norm_definition": "Euclidean norm over all trainable scorer parameters; sqrt(sum of squared full-tensor norms), not sampled weights",
+    "summary": {
+      "initial_success_rate": 0.9,
+      "success_rate": 1.0,
+      "selected_step": 25,
+      "training_samples": 2955,
+      "successful_episodes": 246,
+      "train_seconds": 1680.071007917053
+    },
+    "series": [
+      {
+        "step": 0,
+        "elapsed_seconds": 0.0,
+        "loss": null,
+        "grad_norm": null,
+        "step_delta_l2": 0.0,
+        "total_delta_l2": 0.0,
+        "head_norm_l2": 54.00343584472242
+      },
+      {
+        "step": 1,
+        "elapsed_seconds": 8911.24717617035,
+        "loss": 1.2918851375579834,
+        "grad_norm": 0.814020037651062,
+        "step_delta_l2": 0.10494236094795402,
+        "total_delta_l2": 0.10494236094795402,
+        "head_norm_l2": 54.00467043348744
+      },
+      {
+        "step": 2,
+        "elapsed_seconds": 8912.439659118652,
+        "loss": 1.1474531888961792,
+        "grad_norm": 0.7760086059570312,
+        "step_delta_l2": 0.06449103170924998,
+        "total_delta_l2": 0.14545933845654355,
+        "head_norm_l2": 54.00621445536537
+      },
+      {
+        "step": 3,
+        "elapsed_seconds": 8912.594148159027,
+        "loss": 0.9416286945343018,
+        "grad_norm": 0.7482010126113892,
+        "step_delta_l2": 0.05848335494416363,
+        "total_delta_l2": 0.1831627492422169,
+        "head_norm_l2": 54.00819570300382
+      },
+      {
+        "step": 4,
+        "elapsed_seconds": 8912.7502450943,
+        "loss": 0.797371506690979,
+        "grad_norm": 0.9679784178733826,
+        "step_delta_l2": 0.05287109985745,
+        "total_delta_l2": 0.21296812662095868,
+        "head_norm_l2": 54.01060774141963
+      },
+      {
+        "step": 5,
+        "elapsed_seconds": 8912.899831056595,
+        "loss": 1.0033621788024902,
+        "grad_norm": 0.8406959772109985,
+        "step_delta_l2": 0.05575001836654649,
+        "total_delta_l2": 0.24246010121796377,
+        "head_norm_l2": 54.01298918524739
+      },
+      {
+        "step": 6,
+        "elapsed_seconds": 8913.056494235992,
+        "loss": 0.8123827576637268,
+        "grad_norm": 0.9816433787345886,
+        "step_delta_l2": 0.054091623648653386,
+        "total_delta_l2": 0.2781923313950761,
+        "head_norm_l2": 54.01559907215411
+      },
+      {
+        "step": 7,
+        "elapsed_seconds": 8913.204641103745,
+        "loss": 1.368957757949829,
+        "grad_norm": 0.9416854977607727,
+        "step_delta_l2": 0.04837538652129654,
+        "total_delta_l2": 0.3168428249504814,
+        "head_norm_l2": 54.01787259539366
+      },
+      {
+        "step": 8,
+        "elapsed_seconds": 8913.348795175552,
+        "loss": 1.097116231918335,
+        "grad_norm": 0.9007980227470398,
+        "step_delta_l2": 0.046164654432620834,
+        "total_delta_l2": 0.3549093218370257,
+        "head_norm_l2": 54.01996640421494
+      },
+      {
+        "step": 9,
+        "elapsed_seconds": 8913.492771148682,
+        "loss": 1.2142637968063354,
+        "grad_norm": 0.982420802116394,
+        "step_delta_l2": 0.04390240201897438,
+        "total_delta_l2": 0.38916632344511315,
+        "head_norm_l2": 54.02192086543363
+      },
+      {
+        "step": 10,
+        "elapsed_seconds": 8913.636420249939,
+        "loss": 1.0749616622924805,
+        "grad_norm": 0.6561421751976013,
+        "step_delta_l2": 0.0430409869463686,
+        "total_delta_l2": 0.4202995263702188,
+        "head_norm_l2": 54.023936315094566
+      },
+      {
+        "step": 11,
+        "elapsed_seconds": 8913.784188270569,
+        "loss": 0.7828479409217834,
+        "grad_norm": 1.3189685344696045,
+        "step_delta_l2": 0.04517413325232451,
+        "total_delta_l2": 0.4530681140337966,
+        "head_norm_l2": 54.02599190337899
+      },
+      {
+        "step": 12,
+        "elapsed_seconds": 8913.931774139404,
+        "loss": 0.8566124439239502,
+        "grad_norm": 0.7169914841651917,
+        "step_delta_l2": 0.04749514529139661,
+        "total_delta_l2": 0.4859211606611826,
+        "head_norm_l2": 54.02811891741814
+      },
+      {
+        "step": 13,
+        "elapsed_seconds": 8914.075453281403,
+        "loss": 1.2752074003219604,
+        "grad_norm": 1.0955079793930054,
+        "step_delta_l2": 0.03903381689171649,
+        "total_delta_l2": 0.5162943822278324,
+        "head_norm_l2": 54.03016415287351
+      },
+      {
+        "step": 14,
+        "elapsed_seconds": 8914.218245267868,
+        "loss": 1.380502700805664,
+        "grad_norm": 0.9708316922187805,
+        "step_delta_l2": 0.036217404899755314,
+        "total_delta_l2": 0.5409421638037172,
+        "head_norm_l2": 54.03195279184948
+      },
+      {
+        "step": 15,
+        "elapsed_seconds": 8914.361490249634,
+        "loss": 1.0479023456573486,
+        "grad_norm": 1.1603840589523315,
+        "step_delta_l2": 0.0385041656957417,
+        "total_delta_l2": 0.5641535572466445,
+        "head_norm_l2": 54.03384508435816
+      },
+      {
+        "step": 16,
+        "elapsed_seconds": 8914.50527215004,
+        "loss": 1.1604259014129639,
+        "grad_norm": 0.6204431056976318,
+        "step_delta_l2": 0.037862599537450706,
+        "total_delta_l2": 0.5874116066220376,
+        "head_norm_l2": 54.03566354793268
+      },
+      {
+        "step": 17,
+        "elapsed_seconds": 8914.646574020386,
+        "loss": 1.0929731130599976,
+        "grad_norm": 0.555350124835968,
+        "step_delta_l2": 0.036227148457435646,
+        "total_delta_l2": 0.6096934584396421,
+        "head_norm_l2": 54.03740086142551
+      },
+      {
+        "step": 18,
+        "elapsed_seconds": 8914.790611982346,
+        "loss": 1.4380924701690674,
+        "grad_norm": 1.6453258991241455,
+        "step_delta_l2": 0.03829866681657891,
+        "total_delta_l2": 0.6312735586993163,
+        "head_norm_l2": 54.03912620792454
+      },
+      {
+        "step": 19,
+        "elapsed_seconds": 8914.939461231232,
+        "loss": 0.8729854822158813,
+        "grad_norm": 0.7048052549362183,
+        "step_delta_l2": 0.03616042859177614,
+        "total_delta_l2": 0.6537987211172317,
+        "head_norm_l2": 54.040972105304604
+      },
+      {
+        "step": 20,
+        "elapsed_seconds": 8915.083460092545,
+        "loss": 0.8421018123626709,
+        "grad_norm": 0.7945778369903564,
+        "step_delta_l2": 0.03593778180515041,
+        "total_delta_l2": 0.6783903745355095,
+        "head_norm_l2": 54.042982753731955
+      },
+      {
+        "step": 21,
+        "elapsed_seconds": 8915.225785017014,
+        "loss": 0.9241803884506226,
+        "grad_norm": 0.912674605846405,
+        "step_delta_l2": 0.03865202738891791,
+        "total_delta_l2": 0.7048376781916299,
+        "head_norm_l2": 54.04512436844475
+      },
+      {
+        "step": 22,
+        "elapsed_seconds": 8915.372006177902,
+        "loss": 1.4760886430740356,
+        "grad_norm": 1.583259105682373,
+        "step_delta_l2": 0.04059282322133071,
+        "total_delta_l2": 0.7312526795387125,
+        "head_norm_l2": 54.04710139801893
+      },
+      {
+        "step": 23,
+        "elapsed_seconds": 8915.519138097763,
+        "loss": 1.179553747177124,
+        "grad_norm": 1.1648908853530884,
+        "step_delta_l2": 0.045675491400730676,
+        "total_delta_l2": 0.7591778991997555,
+        "head_norm_l2": 54.049140815770556
+      },
+      {
+        "step": 24,
+        "elapsed_seconds": 8915.66652226448,
+        "loss": 1.0443482398986816,
+        "grad_norm": 1.0560439825057983,
+        "step_delta_l2": 0.04143549658496954,
+        "total_delta_l2": 0.7881234081671927,
+        "head_norm_l2": 54.05131497548039
+      },
+      {
+        "step": 25,
+        "elapsed_seconds": 8915.812638998032,
+        "loss": 0.7562898993492126,
+        "grad_norm": 1.3180475234985352,
+        "step_delta_l2": 0.035741301386088546,
+        "total_delta_l2": 0.8163635545964031,
+        "head_norm_l2": 54.053500928244205
+      },
+      {
+        "step": 26,
+        "elapsed_seconds": 9862.006675958633,
+        "loss": 1.0373190641403198,
+        "grad_norm": 0.7902441620826721,
+        "step_delta_l2": 0.038356720573336806,
+        "total_delta_l2": 0.8487174007999674,
+        "head_norm_l2": 54.05585383597313
+      },
+      {
+        "step": 27,
+        "elapsed_seconds": 9862.159765005112,
+        "loss": 0.9501240253448486,
+        "grad_norm": 0.8669692873954773,
+        "step_delta_l2": 0.03615610356317354,
+        "total_delta_l2": 0.8809213142443512,
+        "head_norm_l2": 54.05820863327991
+      },
+      {
+        "step": 28,
+        "elapsed_seconds": 9862.33530330658,
+        "loss": 1.3458406925201416,
+        "grad_norm": 0.753158450126648,
+        "step_delta_l2": 0.03654386408368436,
+        "total_delta_l2": 0.9118124548465096,
+        "head_norm_l2": 54.06041629566193
+      },
+      {
+        "step": 29,
+        "elapsed_seconds": 9862.488414049149,
+        "loss": 0.6179773211479187,
+        "grad_norm": 1.6971083879470825,
+        "step_delta_l2": 0.03587689110218014,
+        "total_delta_l2": 0.9416948896636504,
+        "head_norm_l2": 54.062669219371614
+      },
+      {
+        "step": 30,
+        "elapsed_seconds": 9862.6422290802,
+        "loss": 1.1794483661651611,
+        "grad_norm": 1.4091917276382446,
+        "step_delta_l2": 0.038347176721185205,
+        "total_delta_l2": 0.9693909054285178,
+        "head_norm_l2": 54.064821878189335
+      },
+      {
+        "step": 31,
+        "elapsed_seconds": 9862.79510307312,
+        "loss": 1.1685855388641357,
+        "grad_norm": 0.901854932308197,
+        "step_delta_l2": 0.04020335502647616,
+        "total_delta_l2": 0.9979942135423077,
+        "head_norm_l2": 54.06699030096546
+      },
+      {
+        "step": 32,
+        "elapsed_seconds": 9862.94275712967,
+        "loss": 0.938414454460144,
+        "grad_norm": 0.629824697971344,
+        "step_delta_l2": 0.03999598845381011,
+        "total_delta_l2": 1.0275879668242196,
+        "head_norm_l2": 54.069241749781824
+      },
+      {
+        "step": 33,
+        "elapsed_seconds": 9863.089344978333,
+        "loss": 0.9358128309249878,
+        "grad_norm": 0.7881684303283691,
+        "step_delta_l2": 0.03822614960351118,
+        "total_delta_l2": 1.0593070268640823,
+        "head_norm_l2": 54.0716864437344
+      },
+      {
+        "step": 34,
+        "elapsed_seconds": 9863.234740018845,
+        "loss": 1.3368678092956543,
+        "grad_norm": 0.7646157741546631,
+        "step_delta_l2": 0.036314022336713915,
+        "total_delta_l2": 1.0902828915796294,
+        "head_norm_l2": 54.07399928638922
+      },
+      {
+        "step": 35,
+        "elapsed_seconds": 9863.379727125168,
+        "loss": 1.1131017208099365,
+        "grad_norm": 0.5131049752235413,
+        "step_delta_l2": 0.035687268964643866,
+        "total_delta_l2": 1.1207859527140702,
+        "head_norm_l2": 54.076277075485116
+      },
+      {
+        "step": 36,
+        "elapsed_seconds": 9863.526321172714,
+        "loss": 1.0376631021499634,
+        "grad_norm": 0.9635797739028931,
+        "step_delta_l2": 0.03769783486536154,
+        "total_delta_l2": 1.1522126771067682,
+        "head_norm_l2": 54.07866856604332
+      },
+      {
+        "step": 37,
+        "elapsed_seconds": 9863.67246723175,
+        "loss": 0.7928928136825562,
+        "grad_norm": 0.8890955448150635,
+        "step_delta_l2": 0.039311503640174945,
+        "total_delta_l2": 1.1838094896101263,
+        "head_norm_l2": 54.08107241414145
+      },
+      {
+        "step": 38,
+        "elapsed_seconds": 9863.81819319725,
+        "loss": 1.115108609199524,
+        "grad_norm": 1.2416799068450928,
+        "step_delta_l2": 0.038262821715589236,
+        "total_delta_l2": 1.214602082002504,
+        "head_norm_l2": 54.08351188199592
+      },
+      {
+        "step": 39,
+        "elapsed_seconds": 9863.965234279633,
+        "loss": 0.8854110836982727,
+        "grad_norm": 0.9165910482406616,
+        "step_delta_l2": 0.04004287379766321,
+        "total_delta_l2": 1.2462770042120102,
+        "head_norm_l2": 54.08600980446502
+      },
+      {
+        "step": 40,
+        "elapsed_seconds": 9864.110323905945,
+        "loss": 0.8994520902633667,
+        "grad_norm": 1.0789884328842163,
+        "step_delta_l2": 0.04074406750335486,
+        "total_delta_l2": 1.2780632846380207,
+        "head_norm_l2": 54.08852894730787
+      },
+      {
+        "step": 41,
+        "elapsed_seconds": 9864.265502929688,
+        "loss": 1.341426134109497,
+        "grad_norm": 1.42778480052948,
+        "step_delta_l2": 0.03990406193340521,
+        "total_delta_l2": 1.3093931659577727,
+        "head_norm_l2": 54.090997187689716
+      },
+      {
+        "step": 42,
+        "elapsed_seconds": 9864.413921117783,
+        "loss": 0.8919115662574768,
+        "grad_norm": 0.5662270188331604,
+        "step_delta_l2": 0.038058973973163344,
+        "total_delta_l2": 1.3411215940309993,
+        "head_norm_l2": 54.09350046450592
+      },
+      {
+        "step": 43,
+        "elapsed_seconds": 9864.565567016602,
+        "loss": 1.044952154159546,
+        "grad_norm": 0.5883643627166748,
+        "step_delta_l2": 0.03687389319459584,
+        "total_delta_l2": 1.37332397611818,
+        "head_norm_l2": 54.09605323454519
+      },
+      {
+        "step": 44,
+        "elapsed_seconds": 9864.714779138565,
+        "loss": 1.0118755102157593,
+        "grad_norm": 1.173733115196228,
+        "step_delta_l2": 0.03862249839183098,
+        "total_delta_l2": 1.4068953292275754,
+        "head_norm_l2": 54.098743340108754
+      },
+      {
+        "step": 45,
+        "elapsed_seconds": 9864.865508079529,
+        "loss": 1.273665189743042,
+        "grad_norm": 1.158862590789795,
+        "step_delta_l2": 0.04285052113970159,
+        "total_delta_l2": 1.4409151601208061,
+        "head_norm_l2": 54.101467762616
+      },
+      {
+        "step": 46,
+        "elapsed_seconds": 9865.014569997787,
+        "loss": 1.0469659566879272,
+        "grad_norm": 1.1394574642181396,
+        "step_delta_l2": 0.041136398506367626,
+        "total_delta_l2": 1.474932973882956,
+        "head_norm_l2": 54.104225387628894
+      },
+      {
+        "step": 47,
+        "elapsed_seconds": 9865.163492202759,
+        "loss": 0.621220052242279,
+        "grad_norm": 0.8420562744140625,
+        "step_delta_l2": 0.04172677137462744,
+        "total_delta_l2": 1.511610752497133,
+        "head_norm_l2": 54.10728059716886
+      },
+      {
+        "step": 48,
+        "elapsed_seconds": 9865.309407949448,
+        "loss": 0.8976742625236511,
+        "grad_norm": 0.7481744885444641,
+        "step_delta_l2": 0.0396680883284018,
+        "total_delta_l2": 1.5481027113614085,
+        "head_norm_l2": 54.11036191200497
+      },
+      {
+        "step": 49,
+        "elapsed_seconds": 9865.453616142273,
+        "loss": 1.4839622974395752,
+        "grad_norm": 1.2226383686065674,
+        "step_delta_l2": 0.03964669060442041,
+        "total_delta_l2": 1.583551610487493,
+        "head_norm_l2": 54.11329928817478
+      },
+      {
+        "step": 50,
+        "elapsed_seconds": 9865.613055944443,
+        "loss": 0.9673160314559937,
+        "grad_norm": 1.1766304969787598,
+        "step_delta_l2": 0.04001783802784148,
+        "total_delta_l2": 1.6201270891598039,
+        "head_norm_l2": 54.11630983879893
+      },
+      {
+        "step": 51,
+        "elapsed_seconds": 9894.228716135025,
+        "loss": 0.8981418013572693,
+        "grad_norm": 0.794003427028656,
+        "step_delta_l2": 0.0414722692777444,
+        "total_delta_l2": 1.6559131308180304,
+        "head_norm_l2": 54.11936606380304
+      },
+      {
+        "step": 52,
+        "elapsed_seconds": 9894.394043207169,
+        "loss": 1.3471297025680542,
+        "grad_norm": 1.2498220205307007,
+        "step_delta_l2": 0.04104118994277045,
+        "total_delta_l2": 1.6926829713652054,
+        "head_norm_l2": 54.122452908122824
+      },
+      {
+        "step": 53,
+        "elapsed_seconds": 9894.561971187592,
+        "loss": 1.1447527408599854,
+        "grad_norm": 0.590499997138977,
+        "step_delta_l2": 0.041249018501557835,
+        "total_delta_l2": 1.7297444922077623,
+        "head_norm_l2": 54.125586607691865
+      },
+      {
+        "step": 54,
+        "elapsed_seconds": 9894.710380077362,
+        "loss": 1.0830106735229492,
+        "grad_norm": 0.7571172118186951,
+        "step_delta_l2": 0.041183135534978196,
+        "total_delta_l2": 1.7658976649646456,
+        "head_norm_l2": 54.12867946655659
+      },
+      {
+        "step": 55,
+        "elapsed_seconds": 9894.85966014862,
+        "loss": 0.9111008644104004,
+        "grad_norm": 0.778606116771698,
+        "step_delta_l2": 0.04509908576265581,
+        "total_delta_l2": 1.8049837760525638,
+        "head_norm_l2": 54.13207881044814
+      },
+      {
+        "step": 56,
+        "elapsed_seconds": 9895.006477117538,
+        "loss": 0.9192100763320923,
+        "grad_norm": 0.9477630257606506,
+        "step_delta_l2": 0.046803842111226714,
+        "total_delta_l2": 1.8453443243811418,
+        "head_norm_l2": 54.13558089174515
+      },
+      {
+        "step": 57,
+        "elapsed_seconds": 9895.153539180756,
+        "loss": 0.8723357915878296,
+        "grad_norm": 0.9188543558120728,
+        "step_delta_l2": 0.047097255773214726,
+        "total_delta_l2": 1.883810277967874,
+        "head_norm_l2": 54.13899760417854
+      },
+      {
+        "step": 58,
+        "elapsed_seconds": 9895.300584316254,
+        "loss": 0.9280698299407959,
+        "grad_norm": 0.9691610336303711,
+        "step_delta_l2": 0.045373182532847084,
+        "total_delta_l2": 1.9217298995769698,
+        "head_norm_l2": 54.14245759428284
+      },
+      {
+        "step": 59,
+        "elapsed_seconds": 9895.448480129242,
+        "loss": 1.2505323886871338,
+        "grad_norm": 0.7302437424659729,
+        "step_delta_l2": 0.04421720531873283,
+        "total_delta_l2": 1.9608146227610337,
+        "head_norm_l2": 54.14602198748859
+      },
+      {
+        "step": 60,
+        "elapsed_seconds": 9895.593851089478,
+        "loss": 1.3347179889678955,
+        "grad_norm": 1.3361068964004517,
+        "step_delta_l2": 0.042442741190861014,
+        "total_delta_l2": 1.9999830827979275,
+        "head_norm_l2": 54.149557013996244
+      },
+      {
+        "step": 61,
+        "elapsed_seconds": 9895.741645097733,
+        "loss": 0.7972068190574646,
+        "grad_norm": 0.6417251229286194,
+        "step_delta_l2": 0.04268497003758765,
+        "total_delta_l2": 2.0396117175176074,
+        "head_norm_l2": 54.153209943849795
+      },
+      {
+        "step": 62,
+        "elapsed_seconds": 9895.905513048172,
+        "loss": 1.2831332683563232,
+        "grad_norm": 1.0408700704574585,
+        "step_delta_l2": 0.04159245396282169,
+        "total_delta_l2": 2.0766619113658646,
+        "head_norm_l2": 54.15661408819881
+      },
+      {
+        "step": 63,
+        "elapsed_seconds": 9896.05089712143,
+        "loss": 1.3290576934814453,
+        "grad_norm": 1.1466768980026245,
+        "step_delta_l2": 0.04209557088221107,
+        "total_delta_l2": 2.112755811805372,
+        "head_norm_l2": 54.15984601620545
+      },
+      {
+        "step": 64,
+        "elapsed_seconds": 9896.19534611702,
+        "loss": 0.6631200313568115,
+        "grad_norm": 1.1017327308654785,
+        "step_delta_l2": 0.04497750403167913,
+        "total_delta_l2": 2.1516773753061207,
+        "head_norm_l2": 54.16343469787822
+      },
+      {
+        "step": 65,
+        "elapsed_seconds": 9896.341386079788,
+        "loss": 0.8460478782653809,
+        "grad_norm": 0.5001804828643799,
+        "step_delta_l2": 0.04539316647715774,
+        "total_delta_l2": 2.191740688186575,
+        "head_norm_l2": 54.167095691558124
+      },
+      {
+        "step": 66,
+        "elapsed_seconds": 9896.486493349075,
+        "loss": 1.1385152339935303,
+        "grad_norm": 0.7089537978172302,
+        "step_delta_l2": 0.046167779604675774,
+        "total_delta_l2": 2.2331047422739507,
+        "head_norm_l2": 54.17088479110566
+      },
+      {
+        "step": 67,
+        "elapsed_seconds": 9896.631852149963,
+        "loss": 1.3962963819503784,
+        "grad_norm": 1.1692711114883423,
+        "step_delta_l2": 0.049429574111680134,
+        "total_delta_l2": 2.2758969141441296,
+        "head_norm_l2": 54.17469563677086
+      },
+      {
+        "step": 68,
+        "elapsed_seconds": 9896.78207731247,
+        "loss": 0.9376403093338013,
+        "grad_norm": 0.9618136882781982,
+        "step_delta_l2": 0.04970718956982265,
+        "total_delta_l2": 2.3195365400841794,
+        "head_norm_l2": 54.17865484714904
+      },
+      {
+        "step": 69,
+        "elapsed_seconds": 9896.93267917633,
+        "loss": 1.2268757820129395,
+        "grad_norm": 0.9645088911056519,
+        "step_delta_l2": 0.05100865278641152,
+        "total_delta_l2": 2.3640612576512576,
+        "head_norm_l2": 54.18274198227047
+      },
+      {
+        "step": 70,
+        "elapsed_seconds": 9897.081435203552,
+        "loss": 1.053856372833252,
+        "grad_norm": 0.597000777721405,
+        "step_delta_l2": 0.048215244735767535,
+        "total_delta_l2": 2.4079494860780897,
+        "head_norm_l2": 54.18682420344123
+      },
+      {
+        "step": 71,
+        "elapsed_seconds": 9897.229286193848,
+        "loss": 1.0707014799118042,
+        "grad_norm": 0.6330887675285339,
+        "step_delta_l2": 0.048854665028338795,
+        "total_delta_l2": 2.4519068643285857,
+        "head_norm_l2": 54.190879621672465
+      },
+      {
+        "step": 72,
+        "elapsed_seconds": 9897.378459215164,
+        "loss": 0.9139536619186401,
+        "grad_norm": 0.7529779076576233,
+        "step_delta_l2": 0.0509966743251228,
+        "total_delta_l2": 2.4976818225695894,
+        "head_norm_l2": 54.19515236117474
+      },
+      {
+        "step": 73,
+        "elapsed_seconds": 9897.526991128922,
+        "loss": 0.9350802898406982,
+        "grad_norm": 0.7169362902641296,
+        "step_delta_l2": 0.049921898617157984,
+        "total_delta_l2": 2.542375346236712,
+        "head_norm_l2": 54.19945567053393
+      },
+      {
+        "step": 74,
+        "elapsed_seconds": 9897.671869277954,
+        "loss": 1.1057814359664917,
+        "grad_norm": 0.7767051458358765,
+        "step_delta_l2": 0.05227431201247817,
+        "total_delta_l2": 2.5879307923867385,
+        "head_norm_l2": 54.2038503869532
+      },
+      {
+        "step": 75,
+        "elapsed_seconds": 9897.820451021194,
+        "loss": 1.2729419469833374,
+        "grad_norm": 1.1386947631835938,
+        "step_delta_l2": 0.052638473797417186,
+        "total_delta_l2": 2.6338635043554524,
+        "head_norm_l2": 54.20823888388255
+      },
+      {
+        "step": 76,
+        "elapsed_seconds": 10841.542803287506,
+        "loss": 1.1870466470718384,
+        "grad_norm": 0.8751721978187561,
+        "step_delta_l2": 0.05663523340115502,
+        "total_delta_l2": 2.682550954597697,
+        "head_norm_l2": 54.212926524063285
+      },
+      {
+        "step": 77,
+        "elapsed_seconds": 10841.72480726242,
+        "loss": 1.4569282531738281,
+        "grad_norm": 1.2512458562850952,
+        "step_delta_l2": 0.05704908192272013,
+        "total_delta_l2": 2.729605499182057,
+        "head_norm_l2": 54.21739521390501
+      },
+      {
+        "step": 78,
+        "elapsed_seconds": 10841.914194107056,
+        "loss": 1.2072551250457764,
+        "grad_norm": 0.8533205986022949,
+        "step_delta_l2": 0.05991171398598218,
+        "total_delta_l2": 2.7772340476174517,
+        "head_norm_l2": 54.22196603635412
+      },
+      {
+        "step": 79,
+        "elapsed_seconds": 10842.070520162582,
+        "loss": 0.8494372963905334,
+        "grad_norm": 0.9589229822158813,
+        "step_delta_l2": 0.057810599713694254,
+        "total_delta_l2": 2.827270848573314,
+        "head_norm_l2": 54.2269415387024
+      },
+      {
+        "step": 80,
+        "elapsed_seconds": 10842.225516080856,
+        "loss": 1.2245066165924072,
+        "grad_norm": 0.6321457624435425,
+        "step_delta_l2": 0.058115116931844936,
+        "total_delta_l2": 2.8779904636418054,
+        "head_norm_l2": 54.232083560993075
+      },
+      {
+        "step": 81,
+        "elapsed_seconds": 10842.382583141327,
+        "loss": 1.218612551689148,
+        "grad_norm": 0.5067428350448608,
+        "step_delta_l2": 0.056747753169114366,
+        "total_delta_l2": 2.9287453192361057,
+        "head_norm_l2": 54.23730213588382
+      },
+      {
+        "step": 82,
+        "elapsed_seconds": 10842.53792309761,
+        "loss": 1.2242217063903809,
+        "grad_norm": 0.900667130947113,
+        "step_delta_l2": 0.0595117400437975,
+        "total_delta_l2": 2.979761345163614,
+        "head_norm_l2": 54.242593089964494
+      },
+      {
+        "step": 83,
+        "elapsed_seconds": 10842.691182136536,
+        "loss": 1.1544907093048096,
+        "grad_norm": 0.9226529598236084,
+        "step_delta_l2": 0.05987163655738116,
+        "total_delta_l2": 3.0323341309469423,
+        "head_norm_l2": 54.24815602279611
+      },
+      {
+        "step": 84,
+        "elapsed_seconds": 10842.84017920494,
+        "loss": 0.9539122581481934,
+        "grad_norm": 1.3849458694458008,
+        "step_delta_l2": 0.055158327431410116,
+        "total_delta_l2": 3.0821989512692176,
+        "head_norm_l2": 54.25354486263014
+      },
+      {
+        "step": 85,
+        "elapsed_seconds": 10842.990630149841,
+        "loss": 0.8951994180679321,
+        "grad_norm": 0.986706554889679,
+        "step_delta_l2": 0.05642445009327758,
+        "total_delta_l2": 3.1334731741621265,
+        "head_norm_l2": 54.259206790532915
+      },
+      {
+        "step": 86,
+        "elapsed_seconds": 10843.136114120483,
+        "loss": 1.1105583906173706,
+        "grad_norm": 0.6599605083465576,
+        "step_delta_l2": 0.057089748660060786,
+        "total_delta_l2": 3.185149541387629,
+        "head_norm_l2": 54.26497257830573
+      },
+      {
+        "step": 87,
+        "elapsed_seconds": 10843.278739213943,
+        "loss": 1.0624885559082031,
+        "grad_norm": 0.6961710453033447,
+        "step_delta_l2": 0.057225408653357096,
+        "total_delta_l2": 3.2379666175435475,
+        "head_norm_l2": 54.270931523016074
+      },
+      {
+        "step": 88,
+        "elapsed_seconds": 10843.423023223877,
+        "loss": 0.9595337510108948,
+        "grad_norm": 0.6944292783737183,
+        "step_delta_l2": 0.059548305128556855,
+        "total_delta_l2": 3.292003681548498,
+        "head_norm_l2": 54.27716935275741
+      },
+      {
+        "step": 89,
+        "elapsed_seconds": 10843.593448162079,
+        "loss": 1.059299349784851,
+        "grad_norm": 0.5123626589775085,
+        "step_delta_l2": 0.06144223126395457,
+        "total_delta_l2": 3.3483591709681226,
+        "head_norm_l2": 54.28369860281915
+      },
+      {
+        "step": 90,
+        "elapsed_seconds": 10843.748449087143,
+        "loss": 1.0266783237457275,
+        "grad_norm": 1.1254527568817139,
+        "step_delta_l2": 0.060926079416936035,
+        "total_delta_l2": 3.403148919527176,
+        "head_norm_l2": 54.29013607110339
+      },
+      {
+        "step": 91,
+        "elapsed_seconds": 10843.901148319244,
+        "loss": 0.9232081174850464,
+        "grad_norm": 0.8695915937423706,
+        "step_delta_l2": 0.06213913476230258,
+        "total_delta_l2": 3.4605303772131815,
+        "head_norm_l2": 54.29699727920501
+      },
+      {
+        "step": 92,
+        "elapsed_seconds": 10844.054206371307,
+        "loss": 0.7794504165649414,
+        "grad_norm": 1.0573108196258545,
+        "step_delta_l2": 0.05918817311742323,
+        "total_delta_l2": 3.5139310232291794,
+        "head_norm_l2": 54.3035705990535
+      },
+      {
+        "step": 93,
+        "elapsed_seconds": 10844.200030088425,
+        "loss": 1.3774149417877197,
+        "grad_norm": 1.1132417917251587,
+        "step_delta_l2": 0.05974855407388018,
+        "total_delta_l2": 3.5672452417176164,
+        "head_norm_l2": 54.31009924654281
+      },
+      {
+        "step": 94,
+        "elapsed_seconds": 10844.344066143036,
+        "loss": 1.1160824298858643,
+        "grad_norm": 0.9747298955917358,
+        "step_delta_l2": 0.05849824083878786,
+        "total_delta_l2": 3.61997398984496,
+        "head_norm_l2": 54.316577313893966
+      },
+      {
+        "step": 95,
+        "elapsed_seconds": 10844.490123987198,
+        "loss": 0.9664110541343689,
+        "grad_norm": 0.678783655166626,
+        "step_delta_l2": 0.057190494056324315,
+        "total_delta_l2": 3.6722486961780523,
+        "head_norm_l2": 54.323035100125296
+      },
+      {
+        "step": 96,
+        "elapsed_seconds": 10844.63488817215,
+        "loss": 0.8427225947380066,
+        "grad_norm": 0.9114713072776794,
+        "step_delta_l2": 0.059061959083715664,
+        "total_delta_l2": 3.7261505206446213,
+        "head_norm_l2": 54.32977620348631
+      },
+      {
+        "step": 97,
+        "elapsed_seconds": 10844.788479089737,
+        "loss": 1.0465806722640991,
+        "grad_norm": 0.6614543199539185,
+        "step_delta_l2": 0.058483359008445715,
+        "total_delta_l2": 3.780513077963192,
+        "head_norm_l2": 54.336550968886684
+      },
+      {
+        "step": 98,
+        "elapsed_seconds": 10844.931431293488,
+        "loss": 1.1061431169509888,
+        "grad_norm": 1.0462263822555542,
+        "step_delta_l2": 0.06052559240172341,
+        "total_delta_l2": 3.835989599522052,
+        "head_norm_l2": 54.34350286167053
+      },
+      {
+        "step": 99,
+        "elapsed_seconds": 10845.085291147232,
+        "loss": 0.9138110280036926,
+        "grad_norm": 1.058565378189087,
+        "step_delta_l2": 0.0573862021226247,
+        "total_delta_l2": 3.8874906286054944,
+        "head_norm_l2": 54.35007422973729
+      },
+      {
+        "step": 100,
+        "elapsed_seconds": 10845.233621120453,
+        "loss": 0.9529153108596802,
+        "grad_norm": 0.4442836046218872,
+        "step_delta_l2": 0.05643023540734242,
+        "total_delta_l2": 3.9375414877030086,
+        "head_norm_l2": 54.35649205913581
+      }
+    ],
+    "development": [
+      {
+        "step": 0,
+        "dev_success_rate": 0.9,
+        "dev_risk_count": 0
+      },
+      {
+        "step": 25,
+        "dev_success_rate": 1.0,
+        "dev_risk_count": 0
+      },
+      {
+        "step": 50,
+        "dev_success_rate": 1.0,
+        "dev_risk_count": 0
+      },
+      {
+        "step": 75,
+        "dev_success_rate": 1.0,
+        "dev_risk_count": 0
+      },
+      {
+        "step": 100,
+        "dev_success_rate": 1.0,
+        "dev_risk_count": 0
+      }
+    ],
+    "dataset": {
+      "episodes_total": 367,
+      "successful_episodes": 246,
+      "failed_episodes": 121,
+      "filtered_failure_actions": 106,
+      "cases": {
+        "train": 2955,
+        "dev": 0,
+        "test": 0
+      },
+      "execution": {
+        "control_mode": "skills",
+        "observation_mode": "privileged",
+        "camera_views": []
+      }
+    },
+    "dataset_sha256": "cb47fb85011be5ff40364b84af67d18bd8cddc1f898b0f0b4db7c6e1f7a0a170",
+    "parameter_history_sha256": "20c27ceda6b47b3304a4e1306bf1922e9c93079f0d5f8e4df7cf11c1c38612ea"
+  },
+  "evaluation": {
+    "run_id": "evaluate-20261021-021730-edf5d2",
+    "pairs": 90,
+    "success_rate": 0.9888888888888889,
+    "champion_success_rate": 0.9555555555555556,
+    "paired_gain": 0.03333333333333333,
+    "gain_ci95": [
+      0.0,
+      0.07777777777777778
+    ],
+    "gate": {
+      "passed": false,
+      "checks": {
+        "enough_pairs": true,
+        "task_coverage": true,
+        "success_gain": false,
+        "confidence_interval": false,
+        "no_task_regression": true,
+        "no_risk_increase": true
+      },
+      "thresholds": {
+        "min_pairs": 90,
+        "gain": 0.05,
+        "regression": 0.02,
+        "tasks": [
+          "transfer"
+        ]
+      }
+    }
+  }
+}

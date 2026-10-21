@@ -4,9 +4,9 @@
 
 [中文说明](README.zh-CN.md) · [Documentation](docs/README.md) · [Installation](docs/INSTALLATION.md) · [Architecture](docs/ARCHITECTURE.md) · [Learning & reproduction](docs/LEARNING_GUIDE.md)
 
-https://github.com/user-attachments/assets/89e57879-7f9e-4feb-a852-8389ca887714
+https://github.com/user-attachments/assets/9df6190c-4ce5-40e0-a28b-4c5be9e95cf5
 
-**Self-Evolving Training in action · 61 seconds.** Live collection and decision logs, followed by recorded training curves and independent evaluation on DGX Spark. [Download MP4](docs/media/self-evolving-training.mp4) · [Recording details](docs/media/self-evolving-training.json).
+**Self-Evolving Training · 30-second accelerated replay.** Continuous robot motion and synchronized decisions, trajectory filtering, and 100 recorded optimizer updates—with loss, per-step and cumulative weight-change curves, checkpoint selection, and independent evaluation. These are real experiment highlights from separate collection and training runs. [Download MP4](docs/media/self-evolving-training.mp4) · [Video details](docs/media/self-evolving-training.json) · [Source data](docs/media/self-evolving-training-data.json).
 
 Embodied RSI Lab connects model decisions to a Franka Panda arm in MuJoCo, records what actually happens, and learns from successful trajectories. A candidate model becomes the deployed model only after independent evaluation passes the release checks.
 

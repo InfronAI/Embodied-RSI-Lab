@@ -4,9 +4,9 @@
 
 [English](README.md) · [文档索引](docs/README.md) · [安装运行](docs/INSTALLATION.md) · [架构与数据流程](docs/ARCHITECTURE.md) · [学习与复现](docs/LEARNING_GUIDE.md)
 
-https://github.com/user-attachments/assets/89e57879-7f9e-4feb-a852-8389ca887714
+https://github.com/user-attachments/assets/9df6190c-4ce5-40e0-a28b-4c5be9e95cf5
 
-**自进化训练实录 · 61 秒。** 展示 DGX Spark 的实时采集与决策日志，以及已记录的训练曲线和独立评测结果。[下载 MP4](docs/media/self-evolving-training.mp4) · [录制说明](docs/media/self-evolving-training.json)。
+**自进化训练速览 · 30 秒加速回放。** 连续展示机械臂动作与同步决策、轨迹筛选、100 步真实优化，以及 loss、单步与累计权重变化曲线、checkpoint 选择和独立评测。素材来自不同采集与训练批次的真实实验记录。[下载 MP4](docs/media/self-evolving-training.mp4) · [视频说明](docs/media/self-evolving-training.json) · [原始数据](docs/media/self-evolving-training-data.json)。
 
 模型读取观测并选择动作，MuJoCo 执行物理仿真，系统记录完整轨迹，从成功经验中拟合决策头。候选模型通过独立评测后才会部署，继续下一轮探索。
 
