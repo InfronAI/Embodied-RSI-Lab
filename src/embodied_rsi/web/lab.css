@@ -1,0 +1,94 @@
+.compact-header .compact-brand b {font-size:12px;letter-spacing:.08em}
+.compact-header .lab-tabs {display:flex;align-items:center;gap:3px;min-width:0;overflow-x:auto}
+.lab-tabs button {border:0;background:transparent;white-space:nowrap;padding:7px 12px;color:#93a9b9;font-size:12px}
+.lab-tabs button[aria-selected="true"] {background:#183c3b;color:#86edc8}
+.lab-tabs button:focus-visible {outline:2px solid #86edc8;outline-offset:-2px}
+.lab-panel {flex:1;min-height:0;min-width:0;overflow:auto}
+#lab-workbench {overflow:hidden}
+#lab-report {background:var(--lab-bg)}
+#lab-load-error {padding:10px;color:#ffbc87}
+#lab-configure-model {margin-top:8px;width:100%;font-size:11px;background:#152b36}
+.lab-log-filters {display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.lab-log-filters input {grid-column:1/-1}
+.lab-log-row {border:1px solid #253947;border-radius:6px;margin:7px 0;background:#111e29;font-size:11px}
+.lab-log-row summary {padding:9px;cursor:pointer;display:grid;grid-template-columns:auto 1fr;gap:4px 8px;align-items:start}
+.lab-log-row summary time {font:10px ui-monospace,monospace;color:#8ca5b9}
+.lab-log-row summary b {color:#7fdfbb;font-size:11px;overflow-wrap:anywhere}
+.lab-log-row summary small {grid-column:1/-1;color:#a8bdcb;overflow-wrap:anywhere}
+.lab-log-row pre {margin:0;padding:10px;white-space:pre-wrap;overflow-wrap:anywhere;font:10px/1.6 ui-monospace,monospace;max-width:100%;border-top:1px solid #253947}
+.lab-log-row[data-level="error"] summary b {color:#ff998b}
+.lab-log-row[data-level="warning"] summary b {color:#ffcc80}
+.lab-log-toolbar {display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
+.lab-log-toolbar button,.lab-log-toolbar a {font-size:10px;padding:5px 7px;border:1px solid #2b414d;border-radius:4px;text-decoration:none}
+.lab-log-stages {color:#8ec5b7;font-size:10px;line-height:1.7;margin:4px 0 8px}
+#lab-log-status {font-size:10px;color:#91a8b9;line-height:1.6}
+.lab-log-pager {display:flex;gap:5px}
+.lab-log-pager button {flex:1;font-size:11px}
+@media (max-width:900px) {
+  .compact-header {gap:8px;padding-inline:10px}
+  .lab-tabs button {padding:7px 8px;font-size:11px}
+  .compact-header .compact-brand b {display:none}
+}
+@media (max-width:560px) {
+  .simulation-workbench .compact-header {height:auto;min-height:74px;flex:none;flex-wrap:wrap;padding:5px 8px;gap:0 8px}
+  .lab-tabs {order:3;flex-basis:100%;justify-content:space-between}
+  .lab-tabs button {padding:6px 5px;font-size:10px}
+  #lab-workbench {overflow:auto}
+}
+
+.compact-header .live {margin-left:auto; flex:none;}
+.compact-header .lab-tabs {scrollbar-width:none;}
+.lab-panel {scrollbar-gutter:stable;}
+@media (min-width:561px) {.lab-tabs button{min-height:32px;}}
+@media (max-width:820px) {#lab-workbench{overflow:auto;}}
+
+@media (min-width:901px) {
+  .simulation-workspace {grid-template-columns:var(--lab-workspace-columns); gap:var(--lab-workspace-gap); padding:var(--lab-workspace-gap);}
+}
+
+/* Keep the live console in view; the complete report follows on the same page. */
+#lab-simulation {overflow-y:auto; overflow-x:hidden; scrollbar-gutter:auto;}
+#lab-simulation > .simulation-workspace {
+  height:max(620px, calc(100dvh - var(--lab-header-height, 50px) - 48px));
+  flex:none;
+}
+#lab-report {min-width:0; border-top:1px solid var(--lab-border); outline:none;}
+.report-placeholder {min-height:240px; padding:16px;}
+.report-placeholder h2 {font-size:14px; margin:0 0 14px;}
+.report-placeholder p {color:var(--lab-muted);}
+.inspector-footer {flex:none; display:flex; align-items:center; gap:8px; border-top:1px solid var(--lab-border); padding:6px 12px; flex-wrap:wrap;}
+.inspector-footer .inspector-sync {padding:0; border:0; flex:1;}
+.report-jump {color:var(--lab-accent); font-size:11px; white-space:nowrap; text-decoration:none; padding:3px 0;}
+.report-jump:hover {text-decoration:underline;}
+@media (max-width:900px) {
+  #lab-simulation {overflow:visible; flex:none;}
+  #lab-simulation > .simulation-workspace {height:auto;}
+  #lab-report, .simulation-workspace {scroll-margin-top:var(--lab-header-height, 50px);}
+}
+
+.language-control {margin-left:auto; flex:none;}
+.language-control select {width:auto; min-width:84px; margin:0; padding:6px 8px; font-size:11px;}
+.compact-header .live {margin-left:0;}
+html[lang="en"] .inspector-tabs button {font-size:10px;}
+html[lang="en"] .inspector-sync {line-height:1.5;}
+html[lang="en"] .workspace-settings .active-model-heading {align-items:flex-start; flex-wrap:wrap;}
+html[lang="en"] .active-model dl > div {grid-template-columns:56px minmax(0,1fr);}
+html[lang="en"] .compact-section-head {flex-wrap:wrap;}
+html[lang="en"] .workspace-scene .sim-toolbar button {padding-inline:9px;}
+@media (max-width:560px) {
+  .language-control select {min-width:80px; padding:4px 6px;}
+  .compact-header .lab-tabs {justify-content:space-between; gap:2px;}
+  .lab-tabs button {flex:none;}
+}
+
+/* Resolve hash routes before the first frame; never reveal another workspace while loading. */
+html[data-active-view="connections"] #lab-simulation,
+html[data-active-view="experiment"] #lab-simulation,
+html[data-active-view="comparison"] #lab-simulation,
+html[data-active-view="docs"] #lab-simulation {display:none!important;}
+#lab-workbench[aria-busy="true"] {visibility:hidden; height:0; flex:0; overflow:hidden;}
+#lab-view-loading {padding:26px 20px; color:var(--lab-muted); font-size:13px;}
+@media (max-width:560px) {
+  html[lang="en"] .compact-header .lab-tabs {display:grid;grid-template-columns:.75fr .9fr .8fr 1.65fr .5fr;}
+  html[lang="en"] .lab-tabs button {white-space:normal;line-height:1.35;padding:6px 3px;}
+}

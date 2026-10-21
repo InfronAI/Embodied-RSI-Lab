@@ -1,0 +1,1025 @@
+{
+  "date": "2026-10-20",
+  "status": "completed",
+  "device": "Apple M1 Pro / MPS / FP32",
+  "scope": "Four policies, two profiles, 90 paired scenes each; 720 evaluation-only episodes.",
+  "environment_reference": "docs/results/macos-learning-loop-verification.json",
+  "run": "code-study-20261020-132119-827489",
+  "protocol": {
+    "schema_version": 1,
+    "code_protocol": "stateful-transfer-v1",
+    "task": "transfer",
+    "profiles": [
+      "normal",
+      "missed-grasp"
+    ],
+    "seeds": [
+      20050000,
+      20050001,
+      20050002,
+      20050003,
+      20050004,
+      20050005,
+      20050006,
+      20050007,
+      20050008,
+      20050009,
+      20050010,
+      20050011,
+      20050012,
+      20050013,
+      20050014,
+      20050015,
+      20050016,
+      20050017,
+      20050018,
+      20050019,
+      20050020,
+      20050021,
+      20050022,
+      20050023,
+      20050024,
+      20050025,
+      20050026,
+      20050027,
+      20050028,
+      20050029,
+      20050030,
+      20050031,
+      20050032,
+      20050033,
+      20050034,
+      20050035,
+      20050036,
+      20050037,
+      20050038,
+      20050039,
+      20050040,
+      20050041,
+      20050042,
+      20050043,
+      20050044,
+      20050045,
+      20050046,
+      20050047,
+      20050048,
+      20050049,
+      20050050,
+      20050051,
+      20050052,
+      20050053,
+      20050054,
+      20050055,
+      20050056,
+      20050057,
+      20050058,
+      20050059,
+      20050060,
+      20050061,
+      20050062,
+      20050063,
+      20050064,
+      20050065,
+      20050066,
+      20050067,
+      20050068,
+      20050069,
+      20050070,
+      20050071,
+      20050072,
+      20050073,
+      20050074,
+      20050075,
+      20050076,
+      20050077,
+      20050078,
+      20050079,
+      20050080,
+      20050081,
+      20050082,
+      20050083,
+      20050084,
+      20050085,
+      20050086,
+      20050087,
+      20050088,
+      20050089
+    ],
+    "scene_distribution": "workspace-random-v1",
+    "success_definition": "strict_grasp_v1",
+    "input_contract": "grasp-observation-v1",
+    "observation_mode": "privileged",
+    "staged_prompts": true,
+    "max_steps": 30,
+    "max_retries": 2,
+    "checkpoint": "artifacts/reproduction-20261019/mps/verification/runs/self-train-20261019-224447-a35759/checkpoint",
+    "checkpoint_sha256": "ac910a11ca25b3ef28e1d9916ab3058894f0b50d664a41d404eb5aa388828b06",
+    "source_sha256": {
+      "embodied_rsi.code_policy": "a222dab615a50f16940ba275084f00108785ce39abf37c65fb623fe84cdc29a1",
+      "embodied_rsi.grasp": "d4b74ff6a180cc95b5bee6c15356bb6576f04c57b10809b90b4b34b96b149947",
+      "embodied_rsi.scenes": "0e101ee07592a2db5fc3c155db639064ad51a19fcc418b05de5f3d54f2b2885c",
+      "embodied_rsi.sim": "27efa674e29cf0d421b711fae9050937af71b569df996c5bc88a1b096943620e",
+      "embodied_rsi.stage_prompts": "937c61d03889e257d05786052437dac76bef063c4f434e016af143c9783caafd",
+      "embodied_jev.physics": "e6a0d2a537a9cac28f874d81e60cc53814194d00ad75f6d4648dae5bc272ddc8",
+      "embodied_jev.planning": "faae2d85a349ff6518cb0a214154559906881f6a8e2248678a6672ab328c86ed",
+      "embodied_rsi.deployment": "ea4c0a45937faff2231d0034f696ccb69e1967ee6ba961823113c566b81b2736",
+      "embodied_rsi.evaluation": "8d4f6bf04a28ac85ef479a00168411c16cc7a53241ca605e09f519f7a30677ea",
+      "embodied_rsi.inference_worker": "cc6ef2cc2b909985ed460a0caa8aeb82ffb27457587ad3e6bf87a4a2a690dd5d",
+      "embodied_rsi.policies": "80b85d43966b3e949144003eb0699c9ec026dce68954dca2757bb985ba111b65",
+      "embodied_rsi.code_study": "a37c7cc52147deada0077803e57f38ae24e55af39d443dbe4be32a782ab4cc2d"
+    },
+    "warmup_excluded_from_latency": true,
+    "selection_or_training": false,
+    "automatic_deployment": false,
+    "fault": "First close command is replaced by open; previews do not consume the live fault.",
+    "scope": "Code-policy experiment; simulator state and collision previews; no visual perception"
+  },
+  "protocol_sha256": "ee6f65a9e2bd9369b249c41928d4f327d474ad87c125df4b9587b08a08bf7abf",
+  "model_load_and_warmup_seconds": 9.553607832989655,
+  "policies": {
+    "normal": {
+      "code": {
+        "episodes": 90,
+        "successes": 90,
+        "success_rate": 1.0,
+        "mean_steps": 8.0,
+        "mean_model_calls": 0.0,
+        "decision_p95_ms": 0.024391576880589114,
+        "mean_wall_seconds": 1.4582324485993012,
+        "risks": {
+          "collisions": 0,
+          "drops": 0,
+          "rejections": 0
+        },
+        "fault_exposed_episodes": 0,
+        "successful_after_fault": 0,
+        "success_after_fault_rate": null,
+        "detected_failures": 0
+      },
+      "code_no_recovery": {
+        "episodes": 90,
+        "successes": 90,
+        "success_rate": 1.0,
+        "mean_steps": 8.0,
+        "mean_model_calls": 0.0,
+        "decision_p95_ms": 0.019875005818903446,
+        "mean_wall_seconds": 1.4529637717499604,
+        "risks": {
+          "collisions": 0,
+          "drops": 0,
+          "rejections": 0
+        },
+        "fault_exposed_episodes": 0,
+        "successful_after_fault": 0,
+        "success_after_fault_rate": null,
+        "detected_failures": 0
+      },
+      "rsi": {
+        "episodes": 90,
+        "successes": 73,
+        "success_rate": 0.8111111111111111,
+        "mean_steps": 7.844444444444444,
+        "mean_model_calls": 7.844444444444444,
+        "decision_p95_ms": 552.3897297098301,
+        "mean_wall_seconds": 5.582813478724306,
+        "risks": {
+          "collisions": 0,
+          "drops": 0,
+          "rejections": 0
+        },
+        "fault_exposed_episodes": 0,
+        "successful_after_fault": 0,
+        "success_after_fault_rate": null,
+        "detected_failures": 0
+      },
+      "hybrid": {
+        "episodes": 90,
+        "successes": 90,
+        "success_rate": 1.0,
+        "mean_steps": 8.244444444444444,
+        "mean_model_calls": 5.2444444444444445,
+        "decision_p95_ms": 511.5390000806656,
+        "mean_wall_seconds": 4.28120246104922,
+        "risks": {
+          "collisions": 0,
+          "drops": 0,
+          "rejections": 0
+        },
+        "fault_exposed_episodes": 0,
+        "successful_after_fault": 0,
+        "success_after_fault_rate": null,
+        "detected_failures": 0
+      }
+    },
+    "missed-grasp": {
+      "code": {
+        "episodes": 90,
+        "successes": 90,
+        "success_rate": 1.0,
+        "mean_steps": 11.0,
+        "mean_model_calls": 0.0,
+        "decision_p95_ms": 0.023106060689315196,
+        "mean_wall_seconds": 1.573243084203245,
+        "risks": {
+          "collisions": 0,
+          "drops": 0,
+          "rejections": 0
+        },
+        "fault_exposed_episodes": 90,
+        "successful_after_fault": 90,
+        "success_after_fault_rate": 1.0,
+        "detected_failures": 90
+      },
+      "code_no_recovery": {
+        "episodes": 90,
+        "successes": 0,
+        "success_rate": 0.0,
+        "mean_steps": 3.0,
+        "mean_model_calls": 0.0,
+        "decision_p95_ms": 0.01623718417249619,
+        "mean_wall_seconds": 0.1584674829060936,
+        "risks": {
+          "collisions": 0,
+          "drops": 0,
+          "rejections": 0
+        },
+        "fault_exposed_episodes": 90,
+        "successful_after_fault": 0,
+        "success_after_fault_rate": 0.0,
+        "detected_failures": 90
+      },
+      "rsi": {
+        "episodes": 90,
+        "successes": 71,
+        "success_rate": 0.7888888888888889,
+        "mean_steps": 8.911111111111111,
+        "mean_model_calls": 8.911111111111111,
+        "decision_p95_ms": 550.1767797104549,
+        "mean_wall_seconds": 6.13467087171739,
+        "risks": {
+          "collisions": 0,
+          "drops": 0,
+          "rejections": 0
+        },
+        "fault_exposed_episodes": 90,
+        "successful_after_fault": 71,
+        "success_after_fault_rate": 0.7888888888888889,
+        "detected_failures": 0
+      },
+      "hybrid": {
+        "episodes": 90,
+        "successes": 90,
+        "success_rate": 1.0,
+        "mean_steps": 11.233333333333333,
+        "mean_model_calls": 7.233333333333333,
+        "decision_p95_ms": 510.75212500290945,
+        "mean_wall_seconds": 5.4114493462412305,
+        "risks": {
+          "collisions": 0,
+          "drops": 0,
+          "rejections": 0
+        },
+        "fault_exposed_episodes": 90,
+        "successful_after_fault": 90,
+        "success_after_fault_rate": 1.0,
+        "detected_failures": 90
+      }
+    }
+  },
+  "paired_comparisons": {
+    "normal": {
+      "code_vs_code_no_recovery": {
+        "pairs": 90,
+        "success_rate": 1.0,
+        "champion_success_rate": 1.0,
+        "paired_gain": 0.0,
+        "gain_ci95": [
+          0.0,
+          0.0
+        ],
+        "by_task": {
+          "transfer": {
+            "pairs": 90,
+            "candidate_success_rate": 1.0,
+            "champion_success_rate": 1.0,
+            "delta": 0.0
+          }
+        },
+        "risks": {
+          "collisions": {
+            "candidate": 0,
+            "champion": 0
+          },
+          "drops": {
+            "candidate": 0,
+            "champion": 0
+          },
+          "rejections": {
+            "candidate": 0,
+            "champion": 0
+          }
+        },
+        "mean_steps": 8.0,
+        "p95_latency_ms": 0.026960498653352254,
+        "gate": {
+          "passed": false,
+          "checks": {
+            "enough_pairs": true,
+            "task_coverage": true,
+            "success_gain": false,
+            "confidence_interval": false,
+            "no_task_regression": true,
+            "no_risk_increase": true
+          },
+          "thresholds": {
+            "min_pairs": 90,
+            "gain": 0.05,
+            "regression": 0.02,
+            "tasks": [
+              "transfer"
+            ]
+          }
+        },
+        "scope": "privileged-state / code-generated skills / partial simulator collision checks"
+      },
+      "code_vs_rsi": {
+        "pairs": 90,
+        "success_rate": 1.0,
+        "champion_success_rate": 0.8111111111111111,
+        "paired_gain": 0.18888888888888888,
+        "gain_ci95": [
+          0.1111111111111111,
+          0.2777777777777778
+        ],
+        "by_task": {
+          "transfer": {
+            "pairs": 90,
+            "candidate_success_rate": 1.0,
+            "champion_success_rate": 0.8111111111111111,
+            "delta": 0.18888888888888888
+          }
+        },
+        "risks": {
+          "collisions": {
+            "candidate": 0,
+            "champion": 0
+          },
+          "drops": {
+            "candidate": 0,
+            "champion": 0
+          },
+          "rejections": {
+            "candidate": 0,
+            "champion": 0
+          }
+        },
+        "mean_steps": 8.0,
+        "p95_latency_ms": 0.026960498653352254,
+        "gate": {
+          "passed": true,
+          "checks": {
+            "enough_pairs": true,
+            "task_coverage": true,
+            "success_gain": true,
+            "confidence_interval": true,
+            "no_task_regression": true,
+            "no_risk_increase": true
+          },
+          "thresholds": {
+            "min_pairs": 90,
+            "gain": 0.05,
+            "regression": 0.02,
+            "tasks": [
+              "transfer"
+            ]
+          }
+        },
+        "scope": "privileged-state / code-generated skills / partial simulator collision checks"
+      },
+      "hybrid_vs_rsi": {
+        "pairs": 90,
+        "success_rate": 1.0,
+        "champion_success_rate": 0.8111111111111111,
+        "paired_gain": 0.18888888888888888,
+        "gain_ci95": [
+          0.1111111111111111,
+          0.2777777777777778
+        ],
+        "by_task": {
+          "transfer": {
+            "pairs": 90,
+            "candidate_success_rate": 1.0,
+            "champion_success_rate": 0.8111111111111111,
+            "delta": 0.18888888888888888
+          }
+        },
+        "risks": {
+          "collisions": {
+            "candidate": 0,
+            "champion": 0
+          },
+          "drops": {
+            "candidate": 0,
+            "champion": 0
+          },
+          "rejections": {
+            "candidate": 0,
+            "champion": 0
+          }
+        },
+        "mean_steps": 8.244444444444444,
+        "p95_latency_ms": 543.3769213920459,
+        "gate": {
+          "passed": true,
+          "checks": {
+            "enough_pairs": true,
+            "task_coverage": true,
+            "success_gain": true,
+            "confidence_interval": true,
+            "no_task_regression": true,
+            "no_risk_increase": true
+          },
+          "thresholds": {
+            "min_pairs": 90,
+            "gain": 0.05,
+            "regression": 0.02,
+            "tasks": [
+              "transfer"
+            ]
+          }
+        },
+        "scope": "privileged-state / code-generated skills / partial simulator collision checks"
+      }
+    },
+    "missed-grasp": {
+      "code_vs_code_no_recovery": {
+        "pairs": 90,
+        "success_rate": 1.0,
+        "champion_success_rate": 0.0,
+        "paired_gain": 1.0,
+        "gain_ci95": [
+          1.0,
+          1.0
+        ],
+        "by_task": {
+          "transfer": {
+            "pairs": 90,
+            "candidate_success_rate": 1.0,
+            "champion_success_rate": 0.0,
+            "delta": 1.0
+          }
+        },
+        "risks": {
+          "collisions": {
+            "candidate": 0,
+            "champion": 0
+          },
+          "drops": {
+            "candidate": 0,
+            "champion": 0
+          },
+          "rejections": {
+            "candidate": 0,
+            "champion": 0
+          }
+        },
+        "mean_steps": 11.0,
+        "p95_latency_ms": 0.02686254447326064,
+        "gate": {
+          "passed": true,
+          "checks": {
+            "enough_pairs": true,
+            "task_coverage": true,
+            "success_gain": true,
+            "confidence_interval": true,
+            "no_task_regression": true,
+            "no_risk_increase": true
+          },
+          "thresholds": {
+            "min_pairs": 90,
+            "gain": 0.05,
+            "regression": 0.02,
+            "tasks": [
+              "transfer"
+            ]
+          }
+        },
+        "scope": "privileged-state / code-generated skills / partial simulator collision checks"
+      },
+      "code_vs_rsi": {
+        "pairs": 90,
+        "success_rate": 1.0,
+        "champion_success_rate": 0.7888888888888889,
+        "paired_gain": 0.2111111111111111,
+        "gain_ci95": [
+          0.13333333333333333,
+          0.3
+        ],
+        "by_task": {
+          "transfer": {
+            "pairs": 90,
+            "candidate_success_rate": 1.0,
+            "champion_success_rate": 0.7888888888888889,
+            "delta": 0.2111111111111111
+          }
+        },
+        "risks": {
+          "collisions": {
+            "candidate": 0,
+            "champion": 0
+          },
+          "drops": {
+            "candidate": 0,
+            "champion": 0
+          },
+          "rejections": {
+            "candidate": 0,
+            "champion": 0
+          }
+        },
+        "mean_steps": 11.0,
+        "p95_latency_ms": 0.02686254447326064,
+        "gate": {
+          "passed": true,
+          "checks": {
+            "enough_pairs": true,
+            "task_coverage": true,
+            "success_gain": true,
+            "confidence_interval": true,
+            "no_task_regression": true,
+            "no_risk_increase": true
+          },
+          "thresholds": {
+            "min_pairs": 90,
+            "gain": 0.05,
+            "regression": 0.02,
+            "tasks": [
+              "transfer"
+            ]
+          }
+        },
+        "scope": "privileged-state / code-generated skills / partial simulator collision checks"
+      },
+      "hybrid_vs_rsi": {
+        "pairs": 90,
+        "success_rate": 1.0,
+        "champion_success_rate": 0.7888888888888889,
+        "paired_gain": 0.2111111111111111,
+        "gain_ci95": [
+          0.13333333333333333,
+          0.3
+        ],
+        "by_task": {
+          "transfer": {
+            "pairs": 90,
+            "candidate_success_rate": 1.0,
+            "champion_success_rate": 0.7888888888888889,
+            "delta": 0.2111111111111111
+          }
+        },
+        "risks": {
+          "collisions": {
+            "candidate": 0,
+            "champion": 0
+          },
+          "drops": {
+            "candidate": 0,
+            "champion": 0
+          },
+          "rejections": {
+            "candidate": 0,
+            "champion": 0
+          }
+        },
+        "mean_steps": 11.233333333333333,
+        "p95_latency_ms": 530.8261033738381,
+        "gate": {
+          "passed": true,
+          "checks": {
+            "enough_pairs": true,
+            "task_coverage": true,
+            "success_gain": true,
+            "confidence_interval": true,
+            "no_task_regression": true,
+            "no_risk_increase": true
+          },
+          "thresholds": {
+            "min_pairs": 90,
+            "gain": 0.05,
+            "regression": 0.02,
+            "tasks": [
+              "transfer"
+            ]
+          }
+        },
+        "scope": "privileged-state / code-generated skills / partial simulator collision checks"
+      }
+    }
+  },
+  "deployment_supported": false,
+  "interpretation": "Paired gates are diagnostics only; no code deployment or training is performed.",
+  "input_plan": {
+    "status": "predeclared_before_code_study",
+    "checkpoint": "artifacts/reproduction-20261019/mps/verification/runs/self-train-20261019-224447-a35759/checkpoint",
+    "checkpoint_sha256": "ac910a11ca25b3ef28e1d9916ab3058894f0b50d664a41d404eb5aa388828b06",
+    "checkpoint_source": "Completed one-round learning-loop reproduction, selected before the three-round audit.",
+    "seed_start": 20050000,
+    "seed_end_inclusive": 20050089,
+    "episodes_per_policy_per_profile": 90,
+    "total_episodes": 720,
+    "policies": [
+      "code",
+      "code_no_recovery",
+      "rsi",
+      "hybrid"
+    ],
+    "profiles": [
+      "normal",
+      "missed-grasp"
+    ],
+    "max_steps": 30,
+    "max_retries": 2,
+    "staged_prompts": true,
+    "success_definition": "strict_grasp_v1",
+    "selection_or_training": false,
+    "automatic_deployment": false,
+    "limitation": "The historical 2026-10-14 checkpoint is unavailable; this run uses the explicitly identified new MPS checkpoint.",
+    "documented_at": "2026-10-20T09:22:06.141581+08:00",
+    "selection_rule_source": "source/reproduce-started.py",
+    "selection_rule_source_sha256": "0aa5832bfacb58655f1645302a5dec9006e55e884b8086326eed8bccf9082f7b"
+  },
+  "input_validation": {
+    "passed": true,
+    "checks": {
+      "checkpoint_sha256": true,
+      "max_steps": true,
+      "max_retries": true,
+      "staged_prompts": true,
+      "success_definition": true,
+      "selection_or_training": true,
+      "automatic_deployment": true,
+      "seeds": true,
+      "profiles": true,
+      "policies": true,
+      "budgets": true,
+      "total_episodes": true
+    },
+    "episodes": 720
+  },
+  "raw_evidence_validation": {
+    "status": "passed",
+    "groups": {
+      "normal/code": {
+        "episodes": 90,
+        "successes": 90,
+        "risk_counters_match": true,
+        "fault_exposed_episodes": 0,
+        "strict_drop_flag_episodes": 0
+      },
+      "normal/code_no_recovery": {
+        "episodes": 90,
+        "successes": 90,
+        "risk_counters_match": true,
+        "fault_exposed_episodes": 0,
+        "strict_drop_flag_episodes": 0
+      },
+      "normal/rsi": {
+        "episodes": 90,
+        "successes": 73,
+        "risk_counters_match": true,
+        "fault_exposed_episodes": 0,
+        "strict_drop_flag_episodes": 17
+      },
+      "normal/hybrid": {
+        "episodes": 90,
+        "successes": 90,
+        "risk_counters_match": true,
+        "fault_exposed_episodes": 0,
+        "strict_drop_flag_episodes": 0
+      },
+      "missed-grasp/code": {
+        "episodes": 90,
+        "successes": 90,
+        "risk_counters_match": true,
+        "fault_exposed_episodes": 90,
+        "strict_drop_flag_episodes": 0
+      },
+      "missed-grasp/code_no_recovery": {
+        "episodes": 90,
+        "successes": 0,
+        "risk_counters_match": true,
+        "fault_exposed_episodes": 90,
+        "strict_drop_flag_episodes": 0
+      },
+      "missed-grasp/rsi": {
+        "episodes": 90,
+        "successes": 71,
+        "risk_counters_match": true,
+        "fault_exposed_episodes": 90,
+        "strict_drop_flag_episodes": 19
+      },
+      "missed-grasp/hybrid": {
+        "episodes": 90,
+        "successes": 90,
+        "risk_counters_match": true,
+        "fault_exposed_episodes": 90,
+        "strict_drop_flag_episodes": 0
+      }
+    }
+  },
+  "failure_analysis": {
+    "normal": {
+      "code": {
+        "failed_episodes": 0,
+        "failure_reasons": {},
+        "strict_drop_flag_episodes": 0,
+        "grasp_lift_carry_without_valid_release": 0,
+        "failed_seeds": [],
+        "first_failure": null
+      },
+      "code_no_recovery": {
+        "failed_episodes": 0,
+        "failure_reasons": {},
+        "strict_drop_flag_episodes": 0,
+        "grasp_lift_carry_without_valid_release": 0,
+        "failed_seeds": [],
+        "first_failure": null
+      },
+      "rsi": {
+        "failed_episodes": 17,
+        "failure_reasons": {
+          "stalled": 17
+        },
+        "strict_drop_flag_episodes": 17,
+        "grasp_lift_carry_without_valid_release": 17,
+        "failed_seeds": [
+          20050000,
+          20050003,
+          20050010,
+          20050013,
+          20050023,
+          20050028,
+          20050031,
+          20050035,
+          20050039,
+          20050041,
+          20050053,
+          20050054,
+          20050056,
+          20050058,
+          20050060,
+          20050070,
+          20050071
+        ],
+        "first_failure": {
+          "seed": 20050000,
+          "failure": "stalled",
+          "steps": 9,
+          "stages": {
+            "grasp": true,
+            "lift": true,
+            "carry": true,
+            "release": false,
+            "drop": true,
+            "place": true,
+            "success": false,
+            "max_lift_m": 0.1985572873565284,
+            "contact_gap_s": 3.799999999999803
+          },
+          "actions": [
+            "approach",
+            "descend",
+            "grasp",
+            "lift",
+            "carry",
+            "release",
+            "withdraw",
+            "withdraw",
+            "withdraw"
+          ],
+          "raw_episodes": "artifacts/reproduction-20261019/mps/code-study/runs/code-study-20261020-132119-827489/episodes.jsonl"
+        }
+      },
+      "hybrid": {
+        "failed_episodes": 0,
+        "failure_reasons": {},
+        "strict_drop_flag_episodes": 0,
+        "grasp_lift_carry_without_valid_release": 0,
+        "failed_seeds": [],
+        "first_failure": null
+      }
+    },
+    "missed-grasp": {
+      "code": {
+        "failed_episodes": 0,
+        "failure_reasons": {},
+        "strict_drop_flag_episodes": 0,
+        "grasp_lift_carry_without_valid_release": 0,
+        "failed_seeds": [],
+        "first_failure": null
+      },
+      "code_no_recovery": {
+        "failed_episodes": 90,
+        "failure_reasons": {
+          "recovery_budget_exhausted": 90
+        },
+        "strict_drop_flag_episodes": 0,
+        "grasp_lift_carry_without_valid_release": 0,
+        "failed_seeds": [
+          20050000,
+          20050001,
+          20050002,
+          20050003,
+          20050004,
+          20050005,
+          20050006,
+          20050007,
+          20050008,
+          20050009,
+          20050010,
+          20050011,
+          20050012,
+          20050013,
+          20050014,
+          20050015,
+          20050016,
+          20050017,
+          20050018,
+          20050019,
+          20050020,
+          20050021,
+          20050022,
+          20050023,
+          20050024,
+          20050025,
+          20050026,
+          20050027,
+          20050028,
+          20050029,
+          20050030,
+          20050031,
+          20050032,
+          20050033,
+          20050034,
+          20050035,
+          20050036,
+          20050037,
+          20050038,
+          20050039,
+          20050040,
+          20050041,
+          20050042,
+          20050043,
+          20050044,
+          20050045,
+          20050046,
+          20050047,
+          20050048,
+          20050049,
+          20050050,
+          20050051,
+          20050052,
+          20050053,
+          20050054,
+          20050055,
+          20050056,
+          20050057,
+          20050058,
+          20050059,
+          20050060,
+          20050061,
+          20050062,
+          20050063,
+          20050064,
+          20050065,
+          20050066,
+          20050067,
+          20050068,
+          20050069,
+          20050070,
+          20050071,
+          20050072,
+          20050073,
+          20050074,
+          20050075,
+          20050076,
+          20050077,
+          20050078,
+          20050079,
+          20050080,
+          20050081,
+          20050082,
+          20050083,
+          20050084,
+          20050085,
+          20050086,
+          20050087,
+          20050088,
+          20050089
+        ],
+        "first_failure": {
+          "seed": 20050000,
+          "failure": "recovery_budget_exhausted",
+          "steps": 3,
+          "stages": {
+            "grasp": false,
+            "lift": false,
+            "carry": false,
+            "release": false,
+            "drop": false,
+            "place": false,
+            "success": false,
+            "max_lift_m": 0.0,
+            "contact_gap_s": 0.0
+          },
+          "actions": [
+            "approach",
+            "descend",
+            "grasp"
+          ],
+          "raw_episodes": "artifacts/reproduction-20261019/mps/code-study/runs/code-study-20261020-132119-827489/episodes.jsonl"
+        }
+      },
+      "rsi": {
+        "failed_episodes": 19,
+        "failure_reasons": {
+          "stalled": 19
+        },
+        "strict_drop_flag_episodes": 19,
+        "grasp_lift_carry_without_valid_release": 19,
+        "failed_seeds": [
+          20050011,
+          20050016,
+          20050021,
+          20050034,
+          20050039,
+          20050052,
+          20050053,
+          20050055,
+          20050056,
+          20050066,
+          20050067,
+          20050071,
+          20050073,
+          20050074,
+          20050076,
+          20050079,
+          20050085,
+          20050087,
+          20050089
+        ],
+        "first_failure": {
+          "seed": 20050011,
+          "failure": "stalled",
+          "steps": 10,
+          "stages": {
+            "grasp": true,
+            "lift": true,
+            "carry": true,
+            "release": false,
+            "drop": true,
+            "place": true,
+            "success": false,
+            "max_lift_m": 0.19829835953784358,
+            "contact_gap_s": 3.799999999999803
+          },
+          "actions": [
+            "approach",
+            "descend",
+            "grasp",
+            "grasp",
+            "lift",
+            "carry",
+            "release",
+            "withdraw",
+            "withdraw",
+            "withdraw"
+          ],
+          "raw_episodes": "artifacts/reproduction-20261019/mps/code-study/runs/code-study-20261020-132119-827489/episodes.jsonl"
+        }
+      },
+      "hybrid": {
+        "failed_episodes": 0,
+        "failure_reasons": {},
+        "strict_drop_flag_episodes": 0,
+        "grasp_lift_carry_without_valid_release": 0,
+        "failed_seeds": [],
+        "first_failure": null
+      }
+    }
+  },
+  "risk_counter_note": "The summary drops counter records held-to-unheld transitions except release/withdraw actions. The separate strict audit stages.drop also detects a contact gap before a valid low release. Its violations fail strict_grasp_v1 even when summary drops is zero; both are retained here.",
+  "reference": {
+    "path": "docs/results/code-policy-study.json",
+    "historical_checkpoint_sha256": "bac7fe5ac1302a8e7822182c1744773630379875587560c7920f268a7f341f61",
+    "same_checkpoint": false
+  },
+  "limitations": [
+    "The historical checkpoint is unavailable; the reproduced one-round checkpoint was selected in advance.",
+    "This is a protocol/budget reproduction with different model weights, not a byte-identical historical rerun.",
+    "Measured latency is specific to this Mac and its PyTorch reference kernels; cross-hardware causation is not inferred.",
+    "Normal and missed-grasp results are reported separately; paired gates are diagnostic and do not deploy policies.",
+    "The task uses privileged simulator state and programmed skills, not image perception or real-robot control."
+  ],
+  "serialization_note": "Local absolute paths are normalized for portability. Recorded hashes refer to the original experiment files, not the normalized JSON representation."
+}

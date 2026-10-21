@@ -1,0 +1,17 @@
+diff --git a/serve/release.py b/serve/release.py
+index 946672e..dc85cb6 100644
+--- a/serve/release.py
++++ b/serve/release.py
+@@ -433,7 +433,12 @@ def load_release(ckpt: str | Path, device: str = "cuda", infer_dtype=None,
+     if bad or unexpected:
+         raise RuntimeError(f"checkpoint does not match {meta['base_model']}: "
+                            f"missing {bad[:5]}, unexpected {list(unexpected)[:5]}")
++    # The weights have been copied into the tower. Release checkpoint mappings
++    # and the unused language-model head before allocating CUDA tensors; keeping
++    # the head alive also retains its tied CPU embedding on unified-memory GPUs.
++    del sd
+     cfg = getattr(lm.config, "text_config", None) or lm.config
++    del lm
+     arch = ArchConfig(readout=spec["readout"], readout_layer=spec["readout_layer"],
+                       max_options=spec["max_options"], freeze_base=True,
+                       option_pool=spec["option_pool"], residual=spec["residual"],

@@ -1,0 +1,26 @@
+[Unit]
+Description=Embodied Lab simulation and self-evolving training
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=120
+StartLimitBurst=4
+
+[Service]
+Type=simple
+User=embodied-lab
+Group=embodied-lab
+WorkingDirectory=/opt/embodied-lab
+EnvironmentFile=/etc/embodied-lab.env
+ExecStart=/opt/embodied-lab/.venv/bin/embodied-lab serve
+Restart=on-failure
+RestartSec=5
+KillMode=control-group
+TimeoutStopSec=45
+UMask=0027
+NoNewPrivileges=true
+PrivateTmp=true
+LimitNOFILE=65535
+LimitCORE=0
+
+[Install]
+WantedBy=multi-user.target

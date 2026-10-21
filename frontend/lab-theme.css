@@ -1,0 +1,233 @@
+/* Layout and semantic surfaces for the integrated model tools. Palette lives in
+   the shared theme.css; the standalone engine remains independently usable. */
+:host {display:block; min-width:0; height:100%; font-size:12px; line-height:1.5;}
+#app {height:100%; min-height:0;}
+.app-shell {height:100%; min-height:0;}
+.header, .viewport-label {display:none;}
+.body-grid {
+  grid-template-columns:232px minmax(280px, 1fr) 340px;
+  gap:10px;
+  padding:10px;
+  background:var(--lab-bg);
+}
+.sidebar, .workspace, .inspector {
+  background:var(--lab-surface);
+  border:1px solid var(--lab-border);
+  border-radius:var(--lab-radius);
+  min-width:0;
+}
+.sidebar {padding:14px; gap:16px;}
+.inspector-section {padding:14px;}
+.event-heading {padding:14px 14px 0;}
+.events, .runtime-log > ol {padding-inline:14px;}
+.history-list > summary, .feedback-details > summary, .runtime-log > summary {padding:12px 14px;}
+.sidebar-bottom, .inspector-footer {display:none;}
+.section-topline {margin-bottom:12px;}
+.section-topline h2 {font-size:12px;}
+.observation-setting {margin-top:0;}
+.scene-toolbar {height:42px; padding:0 12px; gap:8px; background:var(--lab-surface);}
+.scene-toolbar .tabs {gap:14px;}
+.scene-tools {margin-left:auto;}
+.lab-experiment-actions {display:flex; align-items:center; gap:5px;}
+.lab-experiment-actions .icon-button {width:28px; height:28px;}
+.workspace {overflow:hidden;}
+.viewport, .loading, .comparison-scene {background:var(--lab-bg);}
+.telemetry, .timeline, .controls {background:var(--lab-surface);}
+.telemetry {padding:12px; gap:10px;}
+.timeline {height:52px; padding:10px 12px;}
+.controls {height:54px; padding:0 12px;}
+.controls .primary, .secondary {height:34px;}
+.metric-value {color:var(--lab-text);}
+.metric-value small {color:var(--lab-muted);}
+.icon-button, .task-option, .number-input, .select-wrap select {
+  background:var(--lab-input);
+  border-color:var(--lab-border);
+  border-radius:var(--lab-control-radius);
+  color:var(--lab-text);
+}
+.select-wrap select {padding-block:9px;}
+.select-wrap > svg {top:10px;}
+button:hover:not(:disabled) {background:var(--lab-surface-raised);}
+.primary:hover:not(:disabled) {background:#91edcc;}
+.tab {color:var(--lab-muted); border-radius:0;}
+.tab.active {color:var(--lab-accent); border-bottom-color:var(--lab-accent);}
+.task-option.active, .event.active .event-button {
+  background:var(--lab-accent-soft);
+  color:var(--lab-accent);
+  border-color:var(--lab-accent-border);
+}
+.task-option.active svg, .decision-title svg, .connection-button, .live-link,
+.sensor-value.on, .prob-row.selected .prob-top, .comparison-choice,
+.comparison-probability.selected, .connection-result, .extension-probe-result > p,
+#run-log-status, #run-log-feedback, .run-log-badge {color:var(--lab-accent);}
+.dot, .event.active::before, .event:last-child::before {background:var(--lab-accent);}
+.text-button {color:var(--lab-accent); border-radius:3px; background:transparent;}
+.stop, .axis-x {color:var(--lab-danger);}
+.axis-y {color:var(--lab-accent);}
+.axis-z {color:var(--lab-blue);}
+.advanced-settings summary, .input-table, .range-label, .sensor-value, .event-line,
+.history-observations, .live-inputs, .history-list > summary,
+.feedback-details > summary, .runtime-log > summary, .planning-output dd,
+.vision-heading h2, .vision-meta strong, .comparison-setup > summary,
+.comparison-lane-setup legend, .comparison-card h2, .comparison-card dd,
+.comparison-decision-grid h3, .comparison-replay > div:first-child,
+.comparison-replay-controls output, .extension-section > summary,
+.extension-profile-list strong, .extension-probe-result pre, .view-load-state h1 {
+  color:var(--lab-text);
+}
+.eyebrow, .engine-label, .version, .advanced-settings summary span,
+.input-context, .input-table thead, .input-contacts, .task-goal, .range-ticks,
+.scene-axis, .scene-bottom-right, .metric-label, .timeline-caption, .run-budget,
+.decision-meta, .decision-note, .prob-top span:last-child, .empty,
+.sensors .name, .event-line small, .event-detail,
+.history-list > summary span, .runtime-log > summary span, .runtime-log > p,
+.log-item > span, .field-label span, .connection-retention,
+.observation-setting .field-label, .evaluation-settings .field-label,
+.evaluation-settings p, .evaluation-checkbox, .planning-caption,
+.planning-output dt, .vision-explanation, .vision-note, .vision-status,
+.vision-meta span, .vision-download-row span, #vision-view-help, #vision-empty,
+.comparison-heading p, .comparison-setup > summary span,
+.comparison-settings label, .comparison-lane-setup label,
+.comparison-lane-setup label span, .comparison-advanced > summary,
+.comparison-hint, .comparison-advanced > p, #cmp-time-range,
+.comparison-lane-label, .lane-status, .lane-source, .lane-input-source,
+.lane-planning span, .lane-planning-note, .lane-decision-mode, .comparison-muted,
+.comparison-probability, .comparison-card dt, .comparison-card summary,
+.lane-statistics, .comparison-notes, .comparison-empty,
+.extension-heading p, .extension-heading label, .extension-grid label,
+.extension-section > summary span, .extension-json-label, .extension-hint,
+.extension-profile-list p, .extension-probe-result summary,
+#run-log-toggle span, #run-log-count, .run-log-row summary::before,
+.run-log-row .run-log-time, .run-log-row .run-log-context,
+.run-log-row.debug .run-log-badge, .run-log-empty, .run-log-footnote,
+.view-load-state, .loading {color:var(--lab-muted);}
+.input-table thead, .input-contacts, .evaluation-settings, .history-observations details,
+.live-inputs, .event, .log-item, .dialog-actions, .comparison-lane-setup fieldset,
+.comparison-advanced, .comparison-card dl, .comparison-card details,
+.extension-profile-list article, .run-log-row {border-color:var(--lab-border);}
+.switch span, .bar, .contact {background:var(--lab-surface-raised);}
+.switch span::after {background:var(--lab-text);}
+.switch input:checked + span::after {background:#10211d;}
+.switch input:focus-visible + span {outline:2px solid var(--lab-accent); outline-offset:3px;}
+.bar-fill, .event::before {background:#547688;}
+.prob-row.selected .bar-fill {background:var(--lab-accent);}
+.prob-row.rejected {color:var(--lab-warning);}
+.prob-row.rejected .bar-fill {background:var(--lab-warning);}
+.contact {color:var(--lab-muted); border-color:var(--lab-border);}
+.contact.on {background:var(--lab-accent-soft); border-color:var(--lab-accent-border); color:var(--lab-accent);}
+.scene-status, #vision-image-label, .comparison-camera button {
+  color:var(--lab-text);
+  background:#121b24e6;
+  border:1px solid var(--lab-border);
+  border-radius:var(--lab-control-radius);
+}
+.scene-status {top:12px; right:12px;}
+.raw-state, .vision-panel, .history-observations pre, .live-inputs pre,
+.vision-image-wrap, .planning-output, .lane-planning {
+  color:var(--lab-text);
+  background:var(--lab-input);
+  border-color:var(--lab-border);
+}
+.vision-switch {background:var(--lab-surface-raised);}
+.vision-switch button {color:var(--lab-muted);}
+.vision-switch button[aria-pressed="true"] {
+  color:var(--lab-accent); background:var(--lab-accent-soft); box-shadow:none;
+}
+.decision-context, .connection-verification, .extension-probe-result, .extension-message {
+  background:var(--lab-input); color:var(--lab-muted); border-color:var(--lab-border);
+}
+.viewing-history .decision-context {background:var(--lab-warning-soft); border-color:#665337; color:var(--lab-warning);}
+.decision-note.failure, .connection-verification[data-status="failed"] {
+  color:var(--lab-danger); background:var(--lab-danger-soft);
+}
+.success-stamp, .comparison-status {color:var(--lab-accent); background:var(--lab-accent-soft); border-color:var(--lab-accent-border);}
+.log-item, .image-position {color:var(--lab-text);}
+.log-item.warning, #intervention-status, .vision-status.has-alert, .lane-message,
+.run-log-row.warning .run-log-badge, .run-log-row.warning .run-log-message {color:var(--lab-warning);}
+.log-item.error, .comparison-message, .lane-status.failed, #run-log-status.failed,
+.run-log-row.error .run-log-badge, .run-log-row.error .run-log-message {color:var(--lab-danger);}
+.connection-dialog input:not([type="checkbox"]), .connection-dialog select,
+#extensions-view input:not([type="file"]), #extensions-view select, #extensions-view textarea {
+  color:var(--lab-text); background:var(--lab-input); border-color:var(--lab-border); border-radius:var(--lab-control-radius);
+}
+.connection-dialog input[readonly], .comparison-lane-setup input:disabled,
+#extensions-view input:disabled {background:var(--lab-surface-raised); color:var(--lab-muted);}
+.connection-dialog::backdrop {background:#030910b8;}
+.dialog-heading {margin-bottom:16px;}
+.dialog-heading .eyebrow {display:none;}
+.toast {background:var(--lab-surface-raised); color:var(--lab-text); border:1px solid var(--lab-border); border-radius:var(--lab-radius);}
+#comparison-view, #extensions-view {padding:16px; background:var(--lab-bg);}
+.comparison-heading, .extension-heading {align-items:center; margin-bottom:12px; gap:12px;}
+.comparison-heading h1, .extension-heading h1 {font-size:14px; margin:0;}
+.comparison-heading .eyebrow, .comparison-heading h1 + p,
+.extension-heading .eyebrow, .extension-heading h1 + p {display:none;}
+.extension-heading label {flex-direction:row; align-items:center; white-space:nowrap; gap:10px;}
+.extension-heading select {width:140px !important;}
+.comparison-status {font-size:10px; padding:4px 8px;}
+.comparison-setup, .comparison-replay, .comparison-card, .extension-section {
+  background:var(--lab-surface); border-color:var(--lab-border); border-radius:var(--lab-radius);
+}
+.comparison-setup > summary, .extension-section > summary {padding:12px 14px;}
+.comparison-settings, .comparison-lane-setup {padding:0 14px 14px; gap:12px;}
+.comparison-lane-setup fieldset {border-radius:var(--lab-control-radius);}
+.comparison-advanced {margin-inline:14px;}
+.comparison-advanced .comparison-settings {padding:0 0 12px;}
+.comparison-toolbar {padding-top:12px;}
+.comparison-cards {gap:12px; margin-top:16px;}
+.comparison-card > header, .comparison-card-body {padding:14px;}
+.comparison-empty {border-color:var(--lab-border); padding:40px 16px;}
+.comparison-probability i {background:linear-gradient(to right, #547688 var(--probability), var(--lab-surface-raised) var(--probability));}
+.comparison-probability.selected i {background:linear-gradient(to right, var(--lab-accent) var(--probability), var(--lab-surface-raised) var(--probability));}
+.extension-body {padding:0 14px 14px;}
+.extension-section {margin-bottom:12px;}
+.extension-actions {margin:10px 0; gap:8px;}
+.extension-grid {gap:12px;}
+.bottom-bar {display:none;}
+.run-log {--console-line:var(--lab-border); background:var(--lab-surface); border-color:var(--lab-border); color:var(--lab-text);}
+.run-log button, .run-log a, .run-log select, .run-log input[type="search"] {
+  background:var(--lab-input); border-radius:var(--lab-control-radius); border-color:var(--lab-border);
+}
+.run-log-row summary:hover, .run-log-row[open] {background:var(--lab-surface-raised);}
+.run-log-row pre {background:var(--lab-input); color:var(--lab-text); border-radius:var(--lab-control-radius);}
+@media (max-width:900px) and (min-width:821px) {
+  .body-grid {grid-template-columns:210px minmax(270px, 1fr) 270px;}
+}
+@media (max-width:820px) {
+  .app-shell {height:auto; min-height:100%;}
+  .body-grid {display:flex; padding:10px; gap:10px;}
+  .sidebar.open {top:var(--lab-header-height, 50px); width:min(300px, 100vw - 20px); border-radius:0 var(--lab-radius) var(--lab-radius) 0; box-shadow:8px 0 32px #0006;}
+  .scrim.visible {inset:var(--lab-header-height, 50px) 0 0; background:#030910a8;}
+  .workspace {min-height:540px;}
+  .inspector {display:flex; overflow:visible;}
+  .inspector-section {padding:14px;}
+  .scene-toolbar {height:auto; min-height:42px; padding:6px 10px; flex-wrap:wrap;}
+  .scene-toolbar .tabs {height:30px; gap:10px;}
+  .scene-toolbar .tab {font-size:11px; gap:4px;}
+  .scene-tools {margin-left:auto; gap:4px;}
+  .lab-experiment-actions {gap:4px;}
+  .run-log {margin-top:0;}
+  .telemetry {padding:10px; gap:6px;}
+  #comparison-view, #extensions-view {padding:10px; overflow:visible;}
+  .comparison-heading h1, .extension-heading h1 {font-size:14px;}
+  .extension-heading {flex-direction:row;}
+  .extension-heading label {width:auto; font-size:10px;}
+  .extension-heading select {width:116px !important;}
+  .extension-profile-list article {flex-wrap:wrap;}
+  .extension-profile-list article > div:last-child {flex-wrap:wrap;}
+}
+@media (max-width:560px) {
+  .scene-toolbar .tabs {flex-basis:100%;}
+  .scene-tools {margin-left:0;}
+  .lab-experiment-actions {margin-left:auto;}
+  .scene-toolbar .tab {flex:1; justify-content:center;}
+  .scene-toolbar .tabs {gap:8px;}
+  .connection-dialog {padding:16px;}
+}
+
+@media (min-width:901px) {
+  .body-grid {grid-template-columns:var(--lab-workspace-columns); gap:var(--lab-workspace-gap); padding:var(--lab-workspace-gap);}
+}
+.connection-dialog .field-label {color:var(--lab-muted);}
+.language-switch {width:auto;min-width:84px;padding:5px 7px;font-size:11px;}
+:host([lang="en"]) .settings-row {gap:8px;}
+:host([lang="en"]) .section-topline {gap:8px;flex-wrap:wrap;}

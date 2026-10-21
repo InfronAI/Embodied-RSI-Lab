@@ -1,0 +1,260 @@
+{
+  "date": "2026-10-19",
+  "status": "completed",
+  "scope": "One transfer-only learning-loop reproduction on Apple MPS; the multi-round and code-policy studies are reported separately.",
+  "environment": {
+    "git_commit": "4684faff16562ab5080acaead0a8eafc014f7b17",
+    "platform": "macOS-26.6.1-arm64-arm-64bit",
+    "hardware": "Apple M1 Pro",
+    "device": "Apple MPS",
+    "hardware_details": {
+      "gpu_cores": 16,
+      "unified_memory_gib": 16,
+      "source": "system_profiler SPDisplaysDataType and psutil"
+    },
+    "remote_gpu_used_for_experiments": false,
+    "upstreams": {
+      "embodied-jev": {
+        "url": "https://github.com/FBddcz/embodied-jev.git",
+        "commit": "f08de2e4e20d6cd69fea9c57ac1062c3ef510f1e"
+      },
+      "RSI-Jev": {
+        "url": "https://github.com/Shanghua-Gao/RSI-Jev.git",
+        "commit": "163400ec636342a6f1197fc124d0fe20ccdc3167"
+      }
+    },
+    "precision": "FP32",
+    "python": "3.12.15",
+    "packages": {
+      "numpy": "2.5.3",
+      "mujoco": "3.13.0",
+      "torch": "2.14.1",
+      "transformers": "5.17.0",
+      "tokenizers": "0.23.2",
+      "safetensors": "0.8.0",
+      "huggingface-hub": "1.33.0",
+      "fastapi": "0.142.4",
+      "uvicorn": "0.54.0"
+    }
+  },
+  "models": [
+    {
+      "repo": "shgao/rsi-jev-v1.0-qwen3.5-0.8b",
+      "revision": "f9248caceb89caf2e6c968ea33bf0d6eb7f957b0"
+    },
+    {
+      "repo": "Qwen/Qwen3.5-0.8B-Base",
+      "revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68"
+    }
+  ],
+  "collection": {
+    "episodes": 23,
+    "successful_episodes": 9,
+    "success_rate": 0.391304347826087,
+    "episodes_file": "artifacts/reproduction-20261019/mps/current-collection/runs/explore-20261019-223301-c87fa8/episodes.jsonl",
+    "protocol": {
+      "baseline": "shgao/rsi-jev-v1.0-qwen3.5-0.8b@f9248caceb89caf2e6c968ea33bf0d6eb7f957b0",
+      "revision": "f9248caceb89caf2e6c968ea33bf0d6eb7f957b0",
+      "episode_protocol": {
+        "staged_prompts": true,
+        "strict_grasp": true
+      },
+      "seed_start": 0,
+      "max_attempts": 100,
+      "stop_after_successes": 9,
+      "max_steps": 30,
+      "randomize_scene": true,
+      "sampling": "one NumPy RNG per scene seed, as in the live simulation",
+      "source": "new autonomous original-model attempts; no teacher initialization"
+    }
+  },
+  "verification": {
+    "training": "self-train-20261019-224447-a35759",
+    "evaluation": "evaluate-20261019-225008-e533b0",
+    "deployment": "deploy-20261019-231551-f171f2",
+    "parent_head_sha256": "22cb924e0eb9432db467539e18df48ba837a09eee1106b94f04a21b430c11a06",
+    "selected_head_sha256": "e5daf19b37d6e7a9f89f6f9149531b0dd3b961172f2efb60dc59e5cc21c57ef8",
+    "parameters_changed": true,
+    "training_summary": {
+      "objective": "successful_episode_replay",
+      "initial_success_rate": 0.0,
+      "success_rate": 0.6,
+      "selected_step": 50,
+      "training_samples": 101,
+      "successful_episodes": 9,
+      "checkpoint": "artifacts/reproduction-20261019/mps/verification/runs/self-train-20261019-224447-a35759/checkpoint",
+      "train_seconds": 300.49281591607723
+    },
+    "release_report": {
+      "pairs": 90,
+      "success_rate": 0.8222222222222222,
+      "champion_success_rate": 0.0,
+      "paired_gain": 0.8222222222222222,
+      "gain_ci95": [
+        0.7444444444444445,
+        0.9
+      ],
+      "by_task": {
+        "transfer": {
+          "pairs": 90,
+          "candidate_success_rate": 0.8222222222222222,
+          "champion_success_rate": 0.0,
+          "delta": 0.8222222222222222
+        }
+      },
+      "risks": {
+        "collisions": {
+          "candidate": 0,
+          "champion": 0
+        },
+        "drops": {
+          "candidate": 0,
+          "champion": 0
+        },
+        "rejections": {
+          "candidate": 0,
+          "champion": 0
+        }
+      },
+      "mean_steps": 8.033333333333333,
+      "p95_latency_ms": 3374.344340465903,
+      "gate": {
+        "passed": true,
+        "checks": {
+          "enough_pairs": true,
+          "task_coverage": true,
+          "success_gain": true,
+          "confidence_interval": true,
+          "no_task_regression": true,
+          "no_risk_increase": true
+        },
+        "thresholds": {
+          "min_pairs": 90,
+          "gain": 0.05,
+          "regression": 0.02,
+          "tasks": [
+            "transfer"
+          ]
+        }
+      },
+      "scope": "privileged-state / code-generated skills / partial simulator collision checks",
+      "candidate_checkpoint": "artifacts/reproduction-20261019/mps/verification/runs/self-train-20261019-224447-a35759/checkpoint",
+      "candidate_sha256": "ac910a11ca25b3ef28e1d9916ab3058894f0b50d664a41d404eb5aa388828b06",
+      "champion": "shgao/rsi-jev-v1.0-qwen3.5-0.8b@f9248caceb89caf2e6c968ea33bf0d6eb7f957b0",
+      "champion_sha256": "699ae003a52fcb7c363663a7e5e68843d166388f0955bdd5898d834d9050b8e2",
+      "model_backend": "rsi-jev",
+      "candidate_reloaded": true,
+      "scene_distribution": "workspace-random-v1"
+    },
+    "runtime_audit": {
+      "episodes": 30,
+      "successes": 24,
+      "success_rate": 0.8,
+      "environment_flags_removed": true
+    },
+    "historical_autonomous_episodes": 23,
+    "historical_autonomous_successes": 9,
+    "data_source": "artifacts/reproduction-20261019/mps/current-collection/runs/explore-20261019-223301-c87fa8/episodes.jsonl",
+    "data_source_sha256": "0ee8efc478c15654dc01cc4488addba6573bccc2df7ae3aa1c32e33bbcc56148",
+    "runtime_protocol": {
+      "staged_prompts": true,
+      "strict_grasp": true
+    },
+    "scope": "One transfer-only replay round in a separate artifact store; historical autonomous collection"
+  },
+  "parameter_audit": {
+    "baseline": "shgao/rsi-jev-v1.0-qwen3.5-0.8b@f9248caceb89caf2e6c968ea33bf0d6eb7f957b0",
+    "trained_checkpoint": "artifacts/reproduction-20261019/mps/verification/runs/self-train-20261019-224447-a35759/checkpoint",
+    "scorer.safetensors": {
+      "tensors": 12,
+      "elements": 7348225,
+      "changed_tensors": 12,
+      "max_abs_difference": 0.0049841273576021194,
+      "baseline_sha256": "22cb924e0eb9432db467539e18df48ba837a09eee1106b94f04a21b430c11a06",
+      "trained_sha256": "e5daf19b37d6e7a9f89f6f9149531b0dd3b961172f2efb60dc59e5cc21c57ef8"
+    },
+    "tower.safetensors": {
+      "tensors": 319,
+      "elements": 498113344,
+      "changed_tensors": 0,
+      "max_abs_difference": 0.0,
+      "baseline_sha256": "60f8ea114a6dc3070be268a1f95973b503bd300b2965555f8acad2d95cfcff67",
+      "trained_sha256": "60f8ea114a6dc3070be268a1f95973b503bd300b2965555f8acad2d95cfcff67"
+    }
+  },
+  "inference_parity": {
+    "initial": [
+      {
+        "cached_error": 0.0,
+        "serving_error": 1.1920928955078125e-07
+      },
+      {
+        "cached_error": 0.0,
+        "serving_error": 8.195638656616211e-08
+      },
+      {
+        "cached_error": 0.0,
+        "serving_error": 1.4901161193847656e-07
+      },
+      {
+        "cached_error": 0.0,
+        "serving_error": 1.043081283569336e-07
+      },
+      {
+        "cached_error": 0.0,
+        "serving_error": 1.341104507446289e-07
+      },
+      {
+        "cached_error": 0.0,
+        "serving_error": 1.341104507446289e-07
+      }
+    ],
+    "update": {
+      "loss": 1.3657692670822144,
+      "grad_norm": 1.3191189765930176
+    },
+    "probability_change": 0.002666771411895752,
+    "after_update_reload": [
+      {
+        "cached_error": 0.0,
+        "serving_error": 5.960464477539063e-08
+      },
+      {
+        "cached_error": 0.0,
+        "serving_error": 7.450580596923828e-08
+      },
+      {
+        "cached_error": 0.0,
+        "serving_error": 1.6391277313232422e-07
+      },
+      {
+        "cached_error": 0.0,
+        "serving_error": 1.1920928955078125e-07
+      },
+      {
+        "cached_error": 0.0,
+        "serving_error": 5.960464477539063e-08
+      },
+      {
+        "cached_error": 0.0,
+        "serving_error": 8.940696716308594e-08
+      }
+    ]
+  },
+  "reference": "docs/results/learning-loop-verification.json",
+  "reference_comparison": {
+    "reference": "docs/results/learning-loop-verification.json",
+    "collection_counts_match": true,
+    "selected_step_matches": true,
+    "release_success_rate_matches": true,
+    "runtime_audit_successes_match": true,
+    "selected_head_bytes_match": false
+  },
+  "limitations": [
+    "Original historical trajectories were unavailable; all 23 baseline attempts were collected again locally. Historical fields in the verification output refer to this imported new collection.",
+    "The task uses privileged simulator state, programmed skills and partial simulator collision checks.",
+    "This single training round does not establish continued improvement across rounds or generalization to other tasks.",
+    "Cross-device trained head bytes and latency differ; the matching measured completion counts do not imply numerical equivalence."
+  ],
+  "serialization_note": "Local absolute paths are normalized for portability. Recorded hashes refer to the original experiment files, not the normalized JSON representation."
+}

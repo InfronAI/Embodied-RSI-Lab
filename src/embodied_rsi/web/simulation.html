@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Embodied Lab</title>
+    <script>
+      document.documentElement.dataset.activeView = ["connections", "experiment", "comparison", "docs"].includes(location.hash.slice(1)) ? location.hash.slice(1) : "simulation";
+    </script>
+    <meta name="theme-color" content="#0c141c" />
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg?v=20261020" />
+    <link rel="stylesheet" href="/static/style.css?v=rsi-ui-20261015-1" />
+    <link
+      rel="stylesheet"
+      href="/static/simulation-workspace.css?v=20261020-3"
+    />
+    <link rel="stylesheet" href="/static/theme.css" />
+    <link rel="stylesheet" href="/static/lab.css?v=20261020-i18n" />
+    <link rel="stylesheet" href="/static/docs.css?v=20261020-1" />
+  <script src="/static/i18n-catalog.js?v=20261020-1"></script>
+    <script src="/static/i18n.js?v=20261020-1"></script>
+  </head>
+  <body class="panda-page simulation-workbench">
+    <main>
+      <header class="compact-header">
+        <a
+          class="compact-brand"
+          href="/simulation"
+          aria-label="Embodied Lab"
+          >e<span>r</span><b>EMBODIED LAB</b></a
+        >
+        <nav class="lab-tabs" role="tablist" aria-label="实验室功能">
+          <button role="tab" data-lab-view="connections" aria-selected="false">模型配置</button>
+          <button role="tab" data-lab-view="experiment" aria-selected="false">模型测试</button>
+          <button role="tab" data-lab-view="comparison" aria-selected="false">模型对比</button>
+          <button role="tab" data-lab-view="simulation" aria-selected="true">自主训练</button>
+          <button role="tab" data-lab-view="docs" aria-selected="false">文档</button>
+        </nav>
+        <label class="language-control" data-no-i18n>
+          <select id="lab-language" data-language-switch aria-label="Language / 语言">
+            <option value="en">English</option><option value="zh">中文</option>
+          </select>
+        </label>
+        <span class="live" id="connection">连接中</span>
+      </header>
+      <div id="notice" class="notice" role="status" hidden></div>
+      <section id="lab-simulation" class="lab-panel" aria-label="自主训练">
+      <div class="simulation-workspace" tabindex="-1">
+        <section class="workspace-settings panel" aria-label="任务配置">
+          <div class="compact-section-head">
+            <h2>配置</h2>
+            <span>TRANSFER</span>
+          </div>
+          <div class="control-grid">
+            <label class="full-width"
+              >任务<select id="task">
+                <option value="transfer">搬运入盘</option>
+              </select></label
+            >
+            <label
+              >场景种子<input
+                id="seed"
+                type="number"
+                min="0"
+                max="100000000"
+                value="0"
+            /></label>
+            <label
+              >动作预算<input
+                id="max-steps"
+                type="number"
+                min="1"
+                max="200"
+                value="30"
+            /></label>
+            <label class="full-width"
+              >决策模型<select id="policy">
+                <option value="rsi-auto">RSI 自动更新</option>
+                <option value="rsi-selected">指定 RSI 检查点</option>
+                <option value="rsi-initial">初始 RSI-Jev</option>
+                <option value="deployed">当前部署模型</option>
+                <option value="teacher">规则基线</option>
+              </select></label
+            >
+            <label class="full-width" hidden
+              >检查点<select id="model-select">
+                <option value="">选择模型</option>
+              </select></label
+            >
+          </div>
+          <section class="active-model" aria-label="实际使用的模型">
+            <div class="active-model-heading">
+              <span id="active-model-caption">当前模型</span>
+              <span id="active-model-source">待确认</span>
+            </div>
+            <strong id="active-model-name">读取运行状态…</strong>
+            <span id="active-model-status">等待连接</span>
+            <dl>
+              <div>
+                <dt>版本</dt>
+                <dd id="active-model-version">—</dd>
+              </div>
+              <div>
+                <dt>检查点</dt>
+                <dd id="active-model-checkpoint">—</dd>
+              </div>
+              <div>
+                <dt>SHA256</dt>
+                <dd id="active-model-hash">—</dd>
+              </div>
+            </dl>
+            <p id="active-model-pending" hidden></p>
+          </section>
+          <details class="advanced" open>
+            <summary>执行与观测</summary>
+            <div class="control-grid">
+              <label class="full-width">动作决策方式<select id="sim-control-mode" disabled>
+                <option value="skills">预设技能选择</option>
+                <option value="incremental">逐步 XYZ · 闭环规划</option>
+                <option value="hierarchical">分层 XYZ · 子目标规划</option>
+              </select></label>
+              <label class="full-width">观测来源<select id="sim-observation-mode" disabled>
+                <option value="privileged">仿真真值</option>
+                <option value="rgbd">RGB-D 视觉 · 实验</option>
+                <option value="vision" disabled>直接图像 · 当前 RSI 不支持</option>
+              </select></label>
+              <label class="full-width">启用相机<select id="sim-camera-mode" disabled>
+                <option value="none">无相机</option>
+                <option value="external">仅外部相机</option>
+                <option value="wrist">仅腕部相机</option>
+                <option value="both">双相机</option>
+              </select></label>
+            </div>
+            <p class="model-note" id="sim-execution-help">正在读取训练后端支持的模式…</p>
+          </details>
+          <details class="advanced" id="sim-sensors">
+            <summary>模型相机观测</summary>
+            <p class="model-note" id="sim-sensor-status">未启用模型相机；中央画面为仿真预览。</p>
+            <div class="sim-sensor-views" id="sim-sensor-views"></div>
+          </details>
+          <div class="toggle-list">
+            <label class="exploration-option"
+              ><input id="continuous" type="checkbox" checked />连续采集</label
+            >
+            <label class="exploration-option" hidden
+              ><input id="random-tasks" type="checkbox" />随机任务</label
+            >
+            <label class="exploration-option"
+              ><input
+                id="random-scene"
+                type="checkbox"
+                checked
+              />随机场景</label
+            >
+            <label class="exploration-option"
+              ><input id="explore" type="checkbox" checked />随机探索</label
+            >
+            <label class="exploration-option"
+              ><input
+                id="auto-train"
+                type="checkbox"
+                checked
+              />自动训练与评测</label
+            >
+          </div>
+          <div class="model-note" id="auto-state">等待采集状态</div>
+          <details class="advanced">
+            <summary>训练阈值</summary>
+            <div class="auto-thresholds">
+              <label
+                >新增轨迹<input
+                  id="train-every"
+                  type="number"
+                  min="1"
+                  max="10000"
+                  value="30"
+              /></label>
+              <label
+                >最少成功<input
+                  id="min-successes"
+                  type="number"
+                  min="1"
+                  max="1000"
+                  value="5"
+              /></label>
+              <label
+                >训练更新数<input
+                  id="train-steps"
+                  type="number"
+                  min="1"
+                  max="20000"
+                  value="100"
+              /></label>
+            </div>
+          </details>
+          <div class="collection-badge">
+            <span>本次采集</span><strong id="collection-rate">—</strong
+            ><small id="collection-count">0 局 · 0 成功 · 0 失败</small>
+          </div>
+          <div class="collection-badge model-round-badge">
+            <span>当前模型</span><strong id="model-round-rate">—</strong
+            ><small id="model-round-count">等待记录</small>
+          </div>
+          <details class="advanced">
+            <summary>模型与执行信息</summary>
+            <div class="facts">
+              <div><span>动作决策</span><b id="sim-active-control">预设技能选择</b></div>
+              <div><span>观测来源</span><b id="sim-active-observation">仿真真值</b></div>
+              <div><span>模型相机</span><b id="sim-active-cameras">无相机</b></div>
+              <div><span>部署版本</span><b id="deployed">加载中</b></div>
+              <div><span>本局版本</span><b id="version">尚未开始</b></div>
+              <div>
+                <span>请求协议</span><b id="request-protocol">等待请求</b>
+              </div>
+              <div><span>执行方式</span><b id="sampling-mode">—</b></div>
+              <div><span>探索反馈</span><b id="failure-memory">—</b></div>
+              <div><span>渲染</span><b id="render-quality">1024 × 640</b></div>
+            </div>
+          </details>
+        </section>
+        <section class="workspace-scene panel" aria-label="机械臂实时画面">
+          <div class="scene-statusbar">
+            <span id="scene-label">连接场景…</span
+            ><span class="pill" id="status">LOADING</span>
+          </div>
+          <div class="episode-context">
+            <span id="evolution-round">等待模型</span
+            ><span id="evolution-episode">等待任务</span>
+          </div>
+          <div class="viewport panda-viewport">
+            <img id="robot-view" alt="MuJoCo 实时渲染的机械臂与任务场景" />
+            <div class="scene-coordinate">
+              <b id="hud-tcp">—</b><small id="hud-grip">等待观测</small>
+            </div>
+            <div class="viewport-badge">
+              <span class="dot"></span><span id="view-label">外部视角</span>
+            </div>
+          </div>
+          <div class="live-decision" aria-live="polite">
+            <span class="decision-indicator"></span>
+            <div>
+              <small id="live-action-phase">等待决策</small
+              ><strong id="live-action-summary">就绪</strong>
+            </div>
+            <span id="live-action-step" class="pill">0 动作</span>
+          </div>
+          <div class="sim-toolbar">
+            <button id="run" class="primary">▶ 开始任务</button
+            ><button id="pause">Ⅱ 暂停</button><button id="step">单步</button
+            ><button id="stop">■ 停止采集</button
+            ><button id="reset">重置</button
+            ><button id="wrist">腕部视角</button>
+          </div>
+          <div class="replay-controls">
+            <label
+              >回放 <span id="replay-count">0 帧</span
+              ><input
+                id="replay"
+                type="range"
+                min="0"
+                max="0"
+                value="0"
+                disabled /></label
+            ><button id="live">实时</button>
+          </div>
+          <details class="advanced camera-options">
+            <summary>相机</summary>
+            <div class="camera-controls">
+              <label
+                >旋转<input
+                  id="azimuth"
+                  type="range"
+                  min="0"
+                  max="360"
+                  value="135" /></label
+              ><label
+                >距离<input
+                  id="distance"
+                  type="range"
+                  min="0.5"
+                  max="3"
+                  step="0.05"
+                  value="1.75"
+              /></label>
+            </div>
+          </details>
+        </section>
+        <section class="workspace-inspector panel" aria-label="运行与学习面板">
+          <div class="inspector-tabs" role="tablist" aria-label="右侧功能">
+            <button
+              id="tab-decision"
+              role="tab"
+              aria-selected="true"
+              aria-controls="pane-decision"
+              tabindex="0"
+            >
+              决策
+            </button>
+            <button
+              id="tab-training"
+              role="tab"
+              aria-selected="false"
+              aria-controls="pane-training"
+              tabindex="-1"
+            >
+              训练
+            </button>
+            <button
+              id="tab-optimization"
+              role="tab"
+              aria-selected="false"
+              aria-controls="pane-optimization"
+              tabindex="-1"
+            >
+              优化
+            </button>
+            <button
+              id="tab-iteration"
+              role="tab"
+              aria-selected="false"
+              aria-controls="pane-iteration"
+              tabindex="-1"
+            >
+              迭代
+            </button>
+            <button
+              id="tab-convergence"
+              role="tab"
+              aria-selected="false"
+              aria-controls="pane-convergence"
+              tabindex="-1"
+            >
+              收敛
+            </button>
+            <button
+              id="tab-logs"
+              role="tab"
+              aria-selected="false"
+              aria-controls="pane-logs"
+              tabindex="-1"
+            >
+              日志
+            </button>
+          </div>
+          <div
+            class="inspector-pane"
+            id="pane-decision"
+            role="tabpanel"
+            aria-labelledby="tab-decision"
+            tabindex="0"
+          >
+            <div class="compact-section-head">
+              <h2>决策时间线</h2>
+              <span id="step-count">0 动作</span>
+            </div>
+            <div id="timeline" class="action-timeline">
+              <div class="empty">等待模型决策</div>
+            </div>
+            <details class="advanced">
+              <summary id="sim-observation-summary">模型观测 · 仿真真值</summary>
+              <div class="facts">
+                <div><span>仿真时间</span><b id="sim-time">—</b></div>
+                <div><span>夹持</span><b id="grip">—</b></div>
+                <div><span>末端 / m</span><b id="tcp">—</b></div>
+                <div><span>物体 / m</span><b id="object">—</b></div>
+                <div><span>本局结果</span><b id="result">等待执行</b></div>
+              </div>
+            </details>
+          </div>
+          <div
+            class="inspector-pane"
+            id="pane-training"
+            role="tabpanel"
+            aria-labelledby="tab-training"
+            tabindex="0"
+            hidden
+          >
+            <div class="compact-section-head">
+              <h2>训练进度</h2>
+              <span id="rsi-current" class="pill">STANDBY</span>
+            </div>
+            <div id="rsi-phases" class="rsi-phases" aria-live="polite"></div>
+            <label class="round-selector"
+              >训练轮次<select id="inspector-training-run">
+                <option value="">跟随最新轮次</option>
+              </select></label
+            >
+            <div
+              id="inspector-training-summary"
+              class="inspector-metrics"
+            ></div>
+            <div id="inspector-training-progress"></div>
+            <div class="chart-heading">训练 Loss</div>
+            <div id="inspector-loss-chart" class="inspector-chart"></div>
+            <a class="metric-link" href="/api/rounds/export/training-loss"
+              >导出 Loss CSV ↓</a
+            >
+          </div>
+          <div
+            class="inspector-pane"
+            id="pane-optimization"
+            role="tabpanel"
+            aria-labelledby="tab-optimization"
+            tabindex="0"
+            hidden
+          >
+            <div class="compact-section-head">
+              <h2>优化状态</h2>
+              <span id="optimization-round">—</span>
+            </div>
+            <div
+              id="inspector-optimization-summary"
+              class="inspector-metrics"
+            ></div>
+            <div class="chart-heading">梯度范数</div>
+            <div id="inspector-gradient-chart" class="inspector-chart"></div>
+            <div class="chart-heading">开发集完成率</div>
+            <div id="inspector-dev-chart" class="inspector-chart"></div>
+            <div id="inspector-gates" class="inspector-gates"></div>
+            <details class="advanced">
+              <summary>训练参数</summary>
+              <pre id="inspector-config"></pre>
+            </details>
+          </div>
+          <div
+            class="inspector-pane"
+            id="pane-iteration"
+            role="tabpanel"
+            aria-labelledby="tab-iteration"
+            tabindex="0"
+            hidden
+          >
+            <section
+              id="rsi-iteration"
+              class="rsi-iteration"
+              aria-label="RSI 每轮变化"
+            >
+              <p>读取迭代记录…</p>
+            </section>
+          </div>
+          <div
+            class="inspector-pane"
+            id="pane-convergence"
+            role="tabpanel"
+            aria-labelledby="tab-convergence"
+            tabindex="0"
+            hidden
+          >
+            <div class="compact-section-head"><h2>完成率与收敛</h2></div>
+            <select id="success-bar-mode" aria-label="成功率统计来源">
+              <option value="evaluation">独立评测 · 父模型 / 候选</option>
+              <option value="collection">探索采集 · 模型版本</option>
+            </select>
+            <p id="success-bar-note"></p>
+            <div id="success-bar-legend" class="success-bar-legend"></div>
+            <div id="success-bar-chart" class="success-bar-chart"></div>
+            <div id="success-bar-summary" class="success-bar-summary"></div>
+            <div id="inspector-convergence-summary" class="model-note"></div>
+            <div class="chart-heading">各轮训练 Loss</div>
+            <div id="inspector-round-loss-chart" class="inspector-chart"></div>
+            <div id="inspector-loss-legend" class="round-legend"></div>
+            <div id="simulation-success" class="simulation-success"></div>
+            <a class="metric-link" href="/api/rounds/export/training-rounds"
+              >导出轮次 CSV ↓</a
+            >
+          </div>
+          <div
+            class="inspector-pane logs-pane"
+            id="pane-logs"
+            role="tabpanel"
+            aria-labelledby="tab-logs"
+            tabindex="0"
+            hidden
+          >
+            <div hidden aria-hidden="true">
+            <div class="compact-section-head">
+              <h2>运行日志</h2>
+              <span id="inspector-log-count">0 条</span>
+            </div>
+            <select id="inspector-log-source" aria-label="日志来源">
+              <option value="live">实时仿真</option>
+              <option value="training">当前训练轮次</option>
+              <option value="all">已接收的全部日志</option>
+            </select>
+            <input
+              id="inspector-log-search"
+              type="search"
+              placeholder="搜索事件或详情"
+              aria-label="搜索运行日志"
+            />
+            <div class="inspector-log-toolbar">
+              <button id="inspector-log-pause" aria-pressed="false">
+                暂停刷新</button
+              ><button id="inspector-log-clear">清空视图</button
+              ><button id="inspector-log-export">导出 JSONL</button>
+            </div>
+            <p id="inspector-log-status" role="status">连接日志中…</p>
+            <div id="inspector-log-entries"></div>
+            <p class="inspector-log-note">
+              可展开输入、候选、返回与训练事件；每组日志最多保留 1,000 条 / 2
+              MiB，显示最新 100 条。刷新后实时快照重新采集。
+            </p>
+            </div>
+            <div id="lab-process-log"></div>
+          </div>
+          <div class="inspector-footer">
+            <div id="inspector-sync" class="inspector-sync" role="status">同步学习记录…</div>
+            <a href="#report" class="report-jump" data-open-report>查看完整报告 ↓</a>
+          </div>
+        </section>
+      </div>
+      <section id="lab-report" aria-label="训练报告" tabindex="-1">
+        <div class="report-placeholder" role="status">
+          <h2>训练报告</h2>
+          <p id="report-load-status">查看训练曲线、独立评测与轨迹记录</p>
+          <button id="report-load" type="button">加载报告</button>
+        </div>
+      </section>
+      </section>
+      <div id="lab-load-error" role="alert" hidden></div>
+      <div id="lab-view-loading" role="status" hidden>正在加载…</div>
+      <section id="lab-workbench" class="lab-panel" aria-label="模型配置、测试与对比" hidden></section>
+      <section id="lab-docs" class="lab-panel" aria-label="项目文档" hidden></section>
+    </main>
+    <script>
+      {
+        const view = document.documentElement.dataset.activeView;
+        document.querySelectorAll(".lab-tabs [data-lab-view]").forEach(tab => {
+          tab.setAttribute("aria-selected", String(tab.dataset.labView === view));
+          tab.tabIndex = tab.dataset.labView === view ? 0 : -1;
+        });
+        if (view !== "simulation") {
+          const loading = document.getElementById("lab-view-loading");
+          loading.hidden = false;
+          loading.textContent = "正在加载" + window.EmbodiedI18n.sourceText(document.querySelector(`.lab-tabs [data-lab-view="${view}"]`)) + "…";
+        }
+      }
+    </script>
+    <script src="/static/simulation-workspace.js?v=20261020-2"></script>
+    <script type="module" src="/static/lab.js?v=20261020-i18n"></script>
+    <script type="module" src="/static/process-log.js"></script>
+    <script src="/static/simulation.js?v=20261020-2"></script>
+  </body>
+</html>

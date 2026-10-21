@@ -1,0 +1,273 @@
+<div class="doc-layout">
+<nav class="doc-toc" aria-label="文档目录"><span class="doc-toc-label">本页内容</span>
+<button type="button" data-doc-section="background" aria-current="location"><span data-no-i18n>01</span>项目背景</button>
+<button type="button" data-doc-section="overview"><span data-no-i18n>02</span>项目概览</button>
+<button type="button" data-doc-section="architecture"><span data-no-i18n>03</span>架构与决策</button>
+<button type="button" data-doc-section="learning"><span data-no-i18n>04</span>自进化训练原理</button>
+<button type="button" data-doc-section="code"><span data-no-i18n>05</span>代码结构</button>
+<button type="button" data-doc-section="reading"><span data-no-i18n>06</span>阅读与学习路线</button>
+<button type="button" data-doc-section="install"><span data-no-i18n>07</span>安装与运行</button>
+<button type="button" data-doc-section="reproduce"><span data-no-i18n>08</span>复现与验证</button>
+<button type="button" data-doc-section="help"><span data-no-i18n>09</span>常见问题</button>
+</nav><article class="doc-article">
+<div class="doc-heading"><div><h1>项目文档</h1><p>从第一个物理动作，到可验证的模型迭代。</p></div><a class="doc-quickstart" href="#docs" data-doc-jump="install">快速开始 ↓</a></div>
+<section class="doc-chapter" id="doc-background" data-doc-chapter="background" aria-labelledby="doc-background-title"><h2 id="doc-background-title" tabindex="-1"><span data-no-i18n>01</span>项目背景</h2>
+<p class="doc-keypoint"><strong>Embodied Lab 是一个机械臂决策与学习实验台。</strong> 模型根据环境选择动作，MuJoCo 验证物理结果，成功经验用于训练下一版模型。主任务是用 Franka Panda 抓取方块并放入目标盘。</p>
+<p><strong>选择动作、执行动作、完成任务是三件事。</strong> 闭爪可能空抓，搬运可能失抓，到达目标也可能尚未稳定。系统分别记录模型选择、实际执行和最终结果，让成败可追溯。</p>
+<p><strong>代码来源：</strong> <a href="https://github.com/FBddcz/embodied-jev" target="_blank" rel="noopener noreferrer" data-no-i18n>embodied_jev</a> 负责模型接口、感知与物理实验； <a href="https://github.com/gaohuan2020/embodied-rsi" target="_blank" rel="noopener noreferrer" data-no-i18n>embodied_rsi</a> 负责采集、训练、评测与部署。embodied_lab 统一启动，一个 8092 服务提供完整工作台。</p>
+<ol class="doc-steps"><li><strong>决策能力如何测量？</strong><p>固定场景、动作与观测，检查模型是否依据真实反馈行动；同时记录程序提供的技能与几何辅助。</p>
+</li><li><strong>成功经验如何进入学习？</strong><p>把完整成功局中的真实决策转成训练样本。<strong>探索改变采样，训练更新权重。</strong></p>
+</li><li><strong>怎样证明新版本更好？</strong><p>在相同新场景上比较父模型与候选，检查提升、置信区间与风险；训练 loss 不能单独决定发布。</p>
+</li></ol>
+<p class="doc-note"><strong>研究范围：受约束的桌面仿真。</strong> 任务、候选动作与部分几何知识由程序定义；当前不控制真实机器人，仿真成绩也不能直接外推到真实硬件或开放任务。</p>
+</section>
+<section class="doc-chapter" id="doc-overview" data-doc-chapter="overview" aria-labelledby="doc-overview-title"><h2 id="doc-overview-title" tabindex="-1"><span data-no-i18n>02</span>项目概览</h2>
+<p class="doc-keypoint"><strong>两个闭环，共用一条证据链。</strong> 局内循环负责观察、决策与执行；跨局循环负责筛选、训练、评测与发布。浏览器展示过程，后端执行并保存记录。</p>
+<div class="doc-section-links" role="group" aria-label="章节内导航"><button type="button" data-doc-jump="overview-tasks">任务与边界</button><button type="button" data-doc-jump="overview-terms">核心概念</button><button type="button" data-doc-jump="overview-workspaces">工作区关系</button><button type="button" data-doc-jump="overview-loops">两个闭环</button><button type="button" data-doc-jump="overview-example">一局实例</button><button type="button" data-doc-jump="overview-metrics">如何看结果</button><button type="button" data-doc-jump="overview-evidence">复现证据</button></div>
+<div class="doc-subsection" id="doc-overview-tasks"><h3 id="doc-overview-tasks-title" tabindex="-1">任务、输入与输出</h3>
+<p><strong>实验条件 = 模型 + 任务 + 场景 + 执行配置。</strong> 配置包括种子、动作、观测、相机与预算。输出包括物理结果、回放、请求记录和指标；进入训练闭环才会生成新权重。</p>
+<div class="doc-table doc-table-wide" tabindex="0"><table><thead><tr><th scope="col">任务</th><th scope="col">目标与差异</th><th scope="col">当前用途</th></tr></thead><tbody><tr><td>搬运入盘 · transfer</td><td>抓取、夹持搬运、释放并撤离；严格协议还检查抬升、掉落和稳定放置。</td><td>自主训练的主任务，也可用于模型测试与对比。</td></tr><tr><td>方块堆叠 · stack</td><td>放到另一方块上；目标高度与支撑面不同。</td><td>模型测试与对比；是否进入某次评测以运行配置为准。</td></tr><tr><td>越障搬运 · barrier</td><td>避开障碍物，同时保持夹持；终点相似，路径要求可能不同。</td><td>用于观察路径选择、碰撞和失败恢复。</td></tr></tbody></table></div>
+<p><strong>任务 ID 决定成功条件。</strong> 新的文字指令不会自动改写场景或评分规则；新增任务需同步实现环境、动作协议和评价。</p>
+</div>
+<div class="doc-subsection" id="doc-overview-terms"><h3 id="doc-overview-terms-title" tabindex="-1">先分清这些实验单位</h3>
+<div class="doc-table "><table><thead><tr><th scope="col">概念</th><th scope="col">在本项目中的含义</th></tr></thead><tbody><tr><td>策略 / 模型</td><td>根据观测从候选中选择。规则、本地或远端模型均可决策；当前权重更新仅适配本地 RSI。</td></tr><tr><td>候选 / 决策</td><td>候选是程序定义的选项，决策是模型的回答；顺序、说明与状态共同组成输入。</td></tr><tr><td>动作步 / 整局</td><td>动作步是一次可能执行或被拒绝的尝试。整局从初始化到终止，包含多步；一步也可能有多次决策。</td></tr><tr><td>运行 / 训练轮次</td><td>运行 ID 关联配置、事件与产物。一轮训练包括取数、拟合、开发选点和独立评测。</td></tr><tr><td>检查点 / 发布版本</td><td>检查点保存权重和元数据；发布版本是通过验收、供后续推理使用的检查点。</td></tr></tbody></table></div>
+</div>
+<div class="doc-subsection" id="doc-overview-workspaces"><h3 id="doc-overview-workspaces-title" tabindex="-1">从配置到实验，再到自进化</h3>
+<div class="doc-table "><table><thead><tr><th scope="col">入口</th><th scope="col">适合做什么</th></tr></thead><tbody><tr><td><a href="#connections">模型配置</a></td><td>保存连接与预设，用决策探针检查接口。保存不调用模型，也不训练。</td></tr><tr><td><a href="#experiment">模型测试</a></td><td>运行一个模型或基线，查看真实输入、选择、执行和失败原因。</td></tr><tr><td><a href="#comparison">模型对比</a></td><td>固定场景、动作、观测与预算，顺序比较模型的整局结果、调用数和耗时。</td></tr><tr><td><a href="#simulation">自主训练</a></td><td>本地 RSI 连续采集，达标后过滤、拟合、评测与发布。右侧看过程，下方看完整报告。</td></tr></tbody></table></div>
+<p><strong>共享代码，不共享同一局实验。</strong> 测试、对比与训练各自管理会话；切换页面后需确认当前模型和参数。远端推理连接不会自动成为可训练模型。</p>
+</div>
+<div class="doc-subsection" id="doc-overview-loops"><h3 id="doc-overview-loops-title" tabindex="-1">实时控制闭环与模型更新闭环</h3>
+<div class="doc-loop-grid"><div><h4>一局之内：观察 → 选择 → 执行 → 再观察</h4><p>依据物体、夹爪与接触反馈选择下一步；失败结果进入后续观测。<strong>每局固定模型版本</strong>，探索只调整采样。</p>
+</div><div><h4>跨越多局：筛选 → 拟合 → 评测 → 发布</h4><p>成功整局形成回放样本，训练器更新决策头。开发集选出候选，独立场景决定是否发布；<strong>新版本从下一局生效。</strong></p>
+</div></div>
+<p><strong>默认方法：按物理结果筛选的自模仿学习。</strong> 成功轨迹提供动作标签，失败轨迹支持诊断与探索；失败本身不直接触发梯度更新。独立策略梯度实验使用另一套目标。</p>
+</div>
+<div class="doc-subsection" id="doc-overview-example"><h3 id="doc-overview-example-title" tabindex="-1">沿着一次搬运理解数据流</h3>
+<p><strong>示例，不是新测得的成绩。</strong> 固定种子、技能模式与仿真真值后，一局通常经历接近、抓取、抬升、搬运、释放和撤离；实际顺序取决于协议与反馈。</p>
+<ol class="doc-steps"><li><strong>看输入</strong><p>核对物体、TCP、夹爪、接触和候选。<strong>中央视图不等于模型输入。</strong></p>
+</li><li><strong>看结果</strong><p><strong>闭爪不等于抓住。</strong> 检查双指接触与夹持状态，再决定下一步。</p>
+</li><li><strong>看整局</strong><p>按当前协议判定整局成功；局部动作正确，不会让失败整局成为成功训练数据。</p>
+</li><li><strong>看版本</strong><p>轨迹通过过滤才进入训练；候选通过评测才发布。对照下一局的 checkpoint 哈希确认切换。</p>
+</li></ol>
+</div>
+<div class="doc-subsection" id="doc-overview-metrics"><h3 id="doc-overview-metrics-title" tabindex="-1">完成率、loss 和延迟分别说明什么</h3>
+<div class="doc-table "><table><thead><tr><th scope="col">指标</th><th scope="col">如何解释</th></tr></thead><tbody><tr><td>采集成功率</td><td>当前场景、预算与探索策略下的成功比例，不等同于独立评测成绩。</td></tr><tr><td>回放 loss</td><td>对成功动作标签的拟合误差；下降不保证多步任务完成率提升。</td></tr><tr><td>配对完成率提升</td><td>同一批独立场景中，候选与父模型的完成率差。结合样本数、置信区间和退步情况阅读；40% → 50% 是提升 10 个百分点。</td></tr><tr><td>模型耗时与整局耗时</td><td>请求等待、调用数、物理和渲染分别计时。分层一步可能有多个请求，单次 API 延迟不能代表整局效率。</td></tr><tr><td>候选概率</td><td>当前输入与候选下的选择分布，不是任务成功概率。改动提示、候选或动作模式后不宜直接比较。</td></tr></tbody></table></div>
+</div>
+<div class="doc-subsection" id="doc-overview-evidence"><h3 id="doc-overview-evidence-title" tabindex="-1">一项结果应能追溯到哪些证据</h3>
+<p><strong>先找运行 ID 与整局 ID。</strong> 再核对模型／场景哈希、执行配置、成功协议、请求、动作结果与终止原因。训练还需数据清单、父模型、训练参数和独立评测记录。</p>
+<p><strong>阅读顺序：一个决策 → 一局任务 → 一轮训练。</strong> 先解释选择、执行和后果，再把曲线对应到数据与模型版本。</p>
+</div>
+</section>
+<section class="doc-chapter" id="doc-architecture" data-doc-chapter="architecture" aria-labelledby="doc-architecture-title"><h2 id="doc-architecture-title" tabindex="-1"><span data-no-i18n>03</span>架构与决策</h2>
+<p class="doc-keypoint"><strong>模型选择动作，程序约束执行，物理环境判定结果。</strong> 按这三个职责阅读架构，再追踪证据如何进入训练与发布。</p>
+<div class="doc-section-links" role="group" aria-label="章节内导航"><button type="button" data-doc-jump="architecture-diagrams">架构与流程图</button><button type="button" data-doc-jump="architecture-layers">系统分层</button><button type="button" data-doc-jump="architecture-lifecycle">进程与会话</button><button type="button" data-doc-jump="architecture-step">单步数据流</button><button type="button" data-doc-jump="architecture-actions">三种动作模式</button><button type="button" data-doc-jump="architecture-observations">观测与相机</button><button type="button" data-doc-jump="architecture-models">模型与概率</button><button type="button" data-doc-jump="architecture-physics">执行与成功</button><button type="button" data-doc-jump="architecture-learning">如何接入训练</button><button type="button" data-doc-jump="architecture-tracing">日志与代码定位</button></div>
+<div class="doc-subsection" id="doc-architecture-diagrams"><h3 id="doc-architecture-diagrams-title" tabindex="-1">从业务、系统到数据的三张图</h3>
+<p><strong>业务图看关系，系统图看分工，数据图看流转。</strong> 点击节点查看说明和源码；支持放大、滚动与展开。</p>
+<div class="doc-diagram-home" data-doc-diagrams></div>
+</div>
+<div class="doc-subsection" id="doc-architecture-layers"><h3 id="doc-architecture-layers-title" tabindex="-1">系统分层与数据方向</h3>
+<div class="doc-table "><table><thead><tr><th scope="col">层级</th><th scope="col">承担的职责与边界</th></tr></thead><tbody><tr><td>浏览器表示层</td><td>提交控制并读取状态。Three.js 绘制测试场景，MuJoCo 提供训练画面；物理和训练由后端执行。</td></tr><tr><td>服务与调度层</td><td>管理接口、会话、采集线程、作业与记录。读取状态不会启动训练。</td></tr><tr><td>决策协议层</td><td>构造输入与候选、调用模型并校验回答。动作模式决定模型承担哪些选择。</td></tr><tr><td>物理执行层</td><td>执行关节控制，推进 MuJoCo，检测接触与成功。模型不能直接改写成功标记。</td></tr><tr><td>学习与发布层</td><td>筛选轨迹、训练候选、独立评测并更新活动注册表。候选存在不代表已部署。</td></tr></tbody></table></div>
+<div class="doc-source"><code data-doc-file>src/embodied_rsi/dashboard.py</code><code data-doc-file>src/embodied_jev/server.py</code><code data-doc-file>frontend/main.js</code><code data-doc-file>src/embodied_rsi/web/lab.js</code></div>
+</div>
+<div class="doc-subsection" id="doc-architecture-lifecycle"><h3 id="doc-architecture-lifecycle-title" tabindex="-1">服务、物理线程与模型工作进程</h3>
+<p><strong>一个服务，多组会话。</strong> 启动器读取 lab-config.json，创建控制台并挂载 /workbench。两部分复用物理代码，但各自维护场景、步骤和状态。</p>
+<p><strong>物理、推理、训练分别调度。</strong> 仿真线程推进与渲染；RSI 子进程通过 JSON 行交换状态、候选和概率；self-improve 作业独立执行训练与评测。</p>
+<p><strong>关闭页面不会停止后台。</strong> 暂停、停止采集和停止训练各有作用域。重新打开时以服务状态为准；加载 checkpoint 也不等于恢复全部优化器状态。</p>
+<div class="doc-source"><code data-doc-file>src/embodied_lab/cli.py</code><code data-doc-file>src/embodied_rsi/simulation.py</code><code data-doc-file>src/embodied_rsi/deployment.py</code><code data-doc-file>src/embodied_rsi/inference_worker.py</code></div>
+</div>
+<div class="doc-subsection" id="doc-architecture-step"><h3 id="doc-architecture-step-title" tabindex="-1">一次动作：从状态到可验证的物理结果</h3>
+<ol class="doc-steps"><li><strong>采样与投影</strong><p>读取当前状态或相机。真值直接投影，RGB-D 先检测，图像模式发送像素；审计数据与模型输入分开。</p>
+</li><li><strong>组织候选与历史</strong><p>按协议组织候选 ID、说明和近期结果。是否预先过滤或预演，取决于动作模式。</p>
+</li><li><strong>请求模型</strong><p>发送状态、指令与候选，记录顺序、回答和耗时。只有支持图像的路径才发送图片。</p>
+</li><li><strong>校验与选取</strong><p>验证 ID 与概率。RSI 评测通常取最大值，探索可采样；保留原始概率和调整后的分布。</p>
+</li><li><strong>预演与执行</strong><p>转换为 TCP 与夹爪命令，检查边界、IK 和接触，再执行。<strong>选中不等于执行。</strong></p>
+</li><li><strong>反馈与收尾</strong><p>记录新的位姿、夹持、释放和终止原因，继续决策或结束整局。训练资格在整局结束后判断。</p>
+</li></ol>
+<p><strong>先定位失败发生在哪一层。</strong> 非法回答、执行拒绝、感知失效、碰撞和预算耗尽各有原因，不能只看最终“失败”标签。</p>
+</div>
+<div class="doc-subsection" id="doc-architecture-actions"><h3 id="doc-architecture-actions-title" tabindex="-1">三种动作模式，三种不同的决策分工</h3>
+<div class="doc-protocol"><h4>预设技能：模型选择动作意图，程序提供几何路径</h4><p><strong>模型选操作，程序给路径。</strong> 候选包括接近、抓取、抬升、搬运、释放等技能，带目标位置、夹爪命令和时长。几何路径与成功规则由代码定义。</p>
+<details class="doc-detail"><summary>展开：两条技能路径的差异</summary><p>模型测试通常先选阶段，再选动作，可使用候选预演信息；RSI 根据当前阶段组织技能菜单。比较完成率时需同时核对阶段约束和候选构造。</p></details>
+<div class="doc-source"><code data-doc-file>src/embodied_jev/planning.py</code><code data-doc-file>src/embodied_jev/runtime.py</code><code data-doc-file>src/embodied_rsi/sim.py</code><code data-doc-file>src/embodied_rsi/stage_prompts.py</code></div>
+</div><div class="doc-protocol"><h4>逐步 XYZ：模型选择移动轴、方向和尺度</h4><p><strong>21 个离散命令：18 个移动 + 张开、闭合、保持。</strong> 三轴正负方向各有 40、10、2 毫米三档。模型逐步对齐并纠错，候选不按预测进展排名。</p>
+<details class="doc-detail"><summary>展开：为什么候选数量会变化</summary><p>越界命令不裁剪。模型测试可展示被拒候选；RSI 请求只包含允许执行的项，所以一次请求不一定有 21 项。</p></details>
+<div class="doc-source"><code data-doc-file>src/embodied_jev/incremental.py</code><code data-doc-file>src/embodied_rsi/configured_sim.py</code></div>
+</div><div class="doc-protocol"><h4>分层 XYZ：先选子目标，再选运动通道</h4><p><strong>先选子目标，再选 X／Y／Z 与夹爪。</strong> 模型决定方向和开合，程序根据相对误差给出每轴 2–12 毫米步长，保留所选方向。</p>
+<details class="doc-detail"><summary>展开：如何统计请求与通道概率</summary><p>RSI 分别记录子目标和四个通道；模型测试可把通道问题合并请求。<strong>调用数、决策数、物理步数不同</strong>，通道概率也不能相乘为成功率。</p></details>
+<div class="doc-source"><code data-doc-file>src/embodied_jev/hierarchical.py</code><code data-doc-file>src/embodied_rsi/configured_sim.py</code></div>
+</div><p class="doc-note"><strong>固定动作模式，再比较模型。</strong> 技能、XYZ 与分层模式提供的程序辅助不同；它们都使用预定义控制器，不直接生成关节力矩或任意代码。</p>
+</div>
+<div class="doc-subsection" id="doc-architecture-observations"><h3 id="doc-architecture-observations-title" tabindex="-1">模型看见什么：观测、相机与审计边界</h3>
+<div class="doc-table doc-table-wide" tabindex="0"><table><thead><tr><th scope="col">观测来源</th><th scope="col">提供给决策的内容</th><th scope="col">适用范围与限制</th></tr></thead><tbody><tr><td>仿真真值</td><td>直接读取环境中的位置、本体与接触信息，按协议投影为结构化输入。它是明确标记的特权观测。</td><td>模型测试和自主训练均支持。开启相机预览不表示图像会进入模型请求。</td></tr><tr><td>RGB-D 检测</td><td>对选中相机的颜色与深度图进行检测、标定反投影与坐标估计，再把结构化结果交给模型。</td><td>两条链路均支持，至少需要一个视角；当前检测依赖已知颜色、尺寸与场景规则。</td></tr><tr><td>直接图像</td><td>将相机 RGB 作为原生图像载荷送给支持视觉的模型；保留 TCP、本体与接触反馈，限制物体／目标真值坐标。</td><td>当前模型测试的逐步 XYZ 与支持图像的 Chat／Claude 路径可用。本地 RSI 训练仅支持文本／结构化状态，直接图像禁用。</td></tr></tbody></table></div>
+<p><strong>RGB-D 是已知场景中的几何检测。</strong> 它使用颜色、深度、标定和尺寸先验；短时遮挡可跟踪，必要目标持续不可见则报错，不回退到真值。</p>
+<p><strong>启用相机不等于把图像交给模型。</strong> 相机在决策／动作边界采样，实际发送内容取决于观测协议。中央三维视图用于调试，模型输入以捕获记录和请求为准。</p>
+<details class="doc-detail"><summary>展开：各协议的观测权限</summary><p>RSI 与逐步 XYZ 使用状态投影；旧模型测试技能路径可包含当前成功状态、场景和预演信息。<strong>以实际请求为准</strong>，核对 state、criteria 与图像载荷。</p></details>
+<p><strong>审计真值与模型观测分开。</strong> before／after 用于核验物理结果，observed_before／observed_after 记录观测。日志出现真值，不代表它进入了模型请求。</p>
+<div class="doc-source"><code data-doc-file>src/embodied_jev/perception.py</code><code data-doc-file>src/embodied_jev/evidence.py</code><code data-doc-file>src/embodied_jev/incremental.py</code><code data-doc-file>src/embodied_rsi/configured_sim.py</code></div>
+</div>
+<div class="doc-subsection" id="doc-architecture-models"><h3 id="doc-architecture-models-title" tabindex="-1">模型适配、候选概率与人工介入</h3>
+<p><strong>适配器把回答变成可校验的选择。</strong> 请求包含状态、指令与候选；返回值需校验 ID、字段和概率。更换提示、候选或接口格式，就可能改变实验条件。</p>
+<div class="doc-table "><table><thead><tr><th scope="col">决策来源</th><th scope="col">如何解读返回值</th></tr></thead><tbody><tr><td>规则基线</td><td>使用代码规则给出动作，是检查环境与执行链路的参照。没有实际模型调用，也没有模型原生候选概率；教师产生的数据需要单独标记。</td></tr><tr><td>本地 RSI / 结构化 Jev</td><td>可返回候选概率。RSI 按当前菜单校验分布再进行最大值选择或采样；远端 Jev 的选择与概率分别保留，选择不是最大值时可以报告差异，不能改写为一条不存在的原始回答。</td></tr><tr><td>Chat / Claude</td><td>解析结构化选择或工具返回；没有原生候选概率时不构造一组虚假概率。模型文字中的自报置信度不等于决策分布。</td></tr></tbody></table></div>
+<p><strong>候选概率是选择偏好，不是任务成功率。</strong> 高概率仍可能不可达或执行失败。界面解释来自公开回答与运行证据，不是模型未公开的内部思考。</p>
+<p><strong>人工介入只控制低概率暂停。</strong> 接口须提供相应候选概率；关闭开关不关闭执行检查。非法输出、感知失效和碰撞仍按各自规则处理。</p>
+<div class="doc-source"><code data-doc-file>src/embodied_jev/policies.py</code><code data-doc-file>src/embodied_rsi/policies.py</code><code data-doc-file>src/embodied_rsi/exploration.py</code></div>
+</div>
+<div class="doc-subsection" id="doc-architecture-physics"><h3 id="doc-architecture-physics-title" tabindex="-1">从 TCP 目标到关节运动，再到成功判定</h3>
+<p><strong>TCP 是末端控制点，IK 把目标位置转成关节姿态。</strong> 控制器用平滑插值推进 MuJoCo。物理步长为 0.002 秒，即每模拟秒 500 步，不等于模型请求频率或墙钟速度。</p>
+<details class="doc-detail"><summary>展开：执行检查覆盖什么</summary><p>检查数值、边界、IK 误差与指定接触。RSI 先克隆预演再执行，模型测试按配置检查。<strong>检查覆盖范围由代码定义</strong>，通过预演不构成真实硬件的完整安全证明。</p></details>
+<div class="doc-table "><table><thead><tr><th scope="col">判定层级</th><th scope="col">需要哪些实际证据</th></tr></thead><tbody><tr><td>动作执行</td><td>控制命令通过当前检查并实际推进了环境。它只说明这一步发生了，不说明抓取有效或整局成功。</td></tr><tr><td>基础放置成功</td><td>方块与目标支撑面接触，水平误差小于 25 毫米，速度低于 25 毫米／秒，夹爪张开并稳定至少 0.4 秒，TCP 撤离到至少 170 毫米高度。</td></tr><tr><td>严格抓取与搬运成功</td><td>在基础放置条件之外，审计稳定双指夹持、至少 30 毫米抬升、保持夹持的搬运、目标附近合规释放，以及无掉落、无禁止接触。新 RSI 默认使用此类严格协议。</td></tr></tbody></table></div>
+<p><strong>成绩必须连同协议比较。</strong> 旧 checkpoint 会恢复绑定的 episode_protocol；复现时核对成功条件、动作、观测与场景分布。</p>
+<div class="doc-source"><code data-doc-file>src/embodied_jev/physics.py</code><code data-doc-file>src/embodied_rsi/grasp.py</code><code data-doc-file>src/embodied_rsi/sim.py</code><code data-doc-file>src/embodied_rsi/episode_protocol.py</code></div>
+</div>
+<div class="doc-subsection" id="doc-architecture-learning"><h3 id="doc-architecture-learning-title" tabindex="-1">决策记录怎样接入训练与部署</h3>
+<p><strong>训练需要完整决策证据。</strong> 保留状态、候选、原始概率、探索策略、选择、执行与审计；分层模式分别保存子目标和各通道标签。</p>
+<p><strong>先达阈值，再筛选。</strong> 新增整局与成功局同时达标才触发；排除失败、重复、仅评测和来源不合规的数据，再审计动作。执行与成功协议随数据保存。</p>
+<p><strong>冻结编码塔，只训练 scorer。</strong> 每轮继承父权重、新建优化器；开发集选 checkpoint，独立配对评测决定是否发布。</p>
+<p><strong>发布前核验，下一局切换。</strong> 核对哈希、加载预热后原子更新注册表。采集模型、训练候选与发布模型可能不同，应分别查看。</p>
+<div class="doc-source"><code data-doc-file>src/embodied_rsi/auto_training.py</code><code data-doc-file>src/embodied_rsi/self_improvement.py</code><code data-doc-file>src/embodied_rsi/task_rsi.py</code><code data-doc-file>src/embodied_rsi/evaluation.py</code><code data-doc-file>src/embodied_rsi/deployment.py</code></div>
+</div>
+<div class="doc-subsection" id="doc-architecture-tracing"><h3 id="doc-architecture-tracing-title" tabindex="-1">从网页现象追到接口、日志和源码</h3>
+<div class="doc-table "><table><thead><tr><th scope="col">观察对象</th><th scope="col">读取路径与代码线索</th></tr></thead><tbody><tr><td>模型测试状态、相机与请求</td><td><code>GET /workbench/api/state</code><code>GET /workbench/api/perception</code><code>GET /workbench/api/logs</code>沿 server → runtime → policies / perception 查找。</td></tr><tr><td>自主训练实时状态与能力</td><td><code>GET /api/simulation</code><code>GET /api/simulation/capabilities</code>沿 dashboard → simulation → sim / configured_sim 查找。</td></tr><tr><td>全过程日志与原始事件</td><td><code>GET /api/lab/logs</code><code>GET /api/runs/{run_id}/events</code>按阶段、运行与整局关联请求、执行、过滤、训练和部署；持久记录由 storage 管理。</td></tr><tr><td>轮次报告与产物</td><td><code>GET /api/overview</code><code>GET /api/rounds</code>对照 artifacts 下的运行目录、JSONL、数据清单、checkpoint 与发布记录。</td></tr></tbody></table></div>
+<p><strong>选错看输入，没动看拒绝，未完成看物理，未发布看验收。</strong> 依次核对 state／候选／回答、executed／rejection、接触与成功协议、独立评测门槛。</p>
+<p><strong>历史回放不等于仍在训练。</strong> SQLite／JSONL 保存过程，相机哈希核对观测，参数快照展示历史。是否仍在训练，以作业状态和新增训练事件为准。</p>
+<div class="doc-source"><code data-doc-file>src/embodied_rsi/storage.py</code><code data-doc-file>src/embodied_rsi/process_log.py</code><code data-doc-file>src/embodied_rsi/web/process-log.js</code></div>
+</div>
+</section>
+<section class="doc-chapter" id="doc-learning" data-doc-chapter="learning" aria-labelledby="doc-learning-title"><h2 id="doc-learning-title" tabindex="-1"><span data-no-i18n>04</span>自进化训练原理</h2>
+<p class="doc-keypoint"><strong>成功经验训练候选，独立评测决定发布。</strong> 默认 self-improve 用成功动作回放交叉熵训练 scorer，编码塔保持冻结；独立策略梯度实验使用另一套目标。</p>
+<div class="doc-cycle" aria-label="展开查看各阶段">
+<details class="doc-stage" open><summary><span data-no-i18n>01</span>采集与探索</summary><div><p>从当前发布模型继续，无发布版本则用固定初始 RSI-Jev。<strong>探索改变采样，不改权重；每局固定版本。</strong></p><div class="doc-source"><code data-doc-file>src/embodied_rsi/simulation.py</code><code data-doc-file>src/embodied_rsi/exploration.py</code></div></div></details>
+<details class="doc-stage"><summary><span data-no-i18n>02</span>触发与过滤</summary><div><p>新增整局和成功局同时达标才触发。排除失败、重复、未执行、空抓、失抓与无夹持搬运；教师、代码策略和仅评测数据不计入模型自采成功。</p><div class="doc-source"><code data-doc-file>src/embodied_rsi/auto_training.py</code><code data-doc-file>src/embodied_rsi/self_improvement.py</code></div></div></details>
+<details class="doc-stage"><summary><span data-no-i18n>03</span>拟合与开发选点</summary><div><p>继承父权重，每轮新建优化器；缓存冻结特征，仅训练决策头。<strong>开发场景按完整任务表现选 checkpoint。</strong></p><div class="doc-source"><code data-doc-file>src/embodied_rsi/task_rsi.py</code><code data-doc-file>src/embodied_rsi/self_improvement.py</code></div></div></details>
+<details class="doc-stage"><summary><span data-no-i18n>04</span>独立配对评测</summary><div><p>用独立新场景配对比较父模型与候选。<strong>默认至少 90 对、每任务 30 对、提升 5 个百分点、95% 提升区间下界大于零</strong>，并检查退步与风险；以本次评测报告为准。</p><div class="doc-source"><code data-doc-file>src/embodied_rsi/workflow.py</code><code data-doc-file>src/embodied_rsi/evaluation.py</code></div></div></details>
+<details class="doc-stage"><summary><span data-no-i18n>05</span>验证与部署</summary><div><p>通过验收后核对哈希、加载预热，再原子更新注册表。<strong>新模型从下一局生效；未通过则保留当前版本。</strong></p><div class="doc-source"><code data-doc-file>src/embodied_rsi/deployment.py</code><code data-doc-file>src/embodied_rsi/inference_worker.py</code></div></div></details>
+</div>
+<p class="doc-note"><strong>协议随数据与 checkpoint 保存。</strong> 评测复用动作、观测和相机设置；不同配置不混训，切换协议需重新采集并评测。</p>
+<a class="doc-inline-link" href="#report">打开训练报告，查看数据、参数与发布证据 →</a>
+</section>
+<section class="doc-chapter" id="doc-code" data-doc-chapter="code" aria-labelledby="doc-code-title"><h2 id="doc-code-title" tabindex="-1"><span data-no-i18n>05</span>代码结构</h2>
+<p class="doc-keypoint"><strong>按职责找代码：embodied_lab 启动，embodied_jev 执行实验，embodied_rsi 管理学习闭环。</strong> 它们属于同一项目；前端修改后重新构建。</p>
+<pre class="doc-tree" tabindex="0"><code>embodied-lab/
+├── src/
+│   ├── embodied_lab/
+│   ├── embodied_jev/
+│   │   ├── assets/
+│   │   └── web/
+│   └── embodied_rsi/
+│       └── web/
+├── frontend/
+├── scripts/
+├── tests/
+├── tests-ui/
+├── tests-lab-ui/
+├── docs/
+├── vendor/RSI-Jev/
+├── artifacts/
+├── lab-config.json
+├── upstreams.lock.json
+└── pyproject.toml</code></pre>
+<div class="doc-table"><table><thead><tr><th scope="col">定位</th><th scope="col">职责与重点</th></tr></thead><tbody><tr><td><code data-doc-file>src/embodied_lab/cli.py</code></td><td>解析统一启动配置，选择实验数据目录与 RSI Python 环境。</td></tr><tr><td><code data-doc-file>src/embodied_jev/physics.py</code><code data-doc-file>src/embodied_jev/runtime.py</code></td><td>场景、接触和成功条件；将模型选择接到真实物理执行。</td></tr><tr><td><code data-doc-file>src/embodied_jev/planning.py</code><code data-doc-file>src/embodied_jev/incremental.py</code><code data-doc-file>src/embodied_jev/hierarchical.py</code></td><td>预设技能、XYZ 短步与分层子目标协议。</td></tr><tr><td><code data-doc-file>src/embodied_jev/policies.py</code><code data-doc-file>src/embodied_jev/perception.py</code></td><td>模型接口适配、选择校验；相机检测、标定与跟踪。</td></tr><tr><td><code data-doc-file>src/embodied_rsi/execution.py</code><code data-doc-file>src/embodied_rsi/configured_sim.py</code><code data-doc-file>src/embodied_rsi/stage_prompts.py</code></td><td>训练闭环的执行配置、仿真桥接与当前状态提示。</td></tr><tr><td><code data-doc-file>src/embodied_rsi/storage.py</code><code data-doc-file>src/embodied_rsi/process_log.py</code><code data-doc-file>src/embodied_rsi/monitor.py</code></td><td>SQLite 事件、全过程日志、资源与训练指标。</td></tr><tr><td><code data-doc-file>src/embodied_rsi/dashboard.py</code><code data-doc-file>src/embodied_jev/server.py</code></td><td>统一服务路由、后台作业控制与模型工作台 API。</td></tr><tr><td><code data-doc-file>src/embodied_rsi/web/lab.js</code><code data-doc-file>src/embodied_rsi/web/i18n.js</code><code data-doc-file>frontend/main.js</code></td><td>导航与按需加载、全站语言切换，以及模型测试交互。</td></tr></tbody></table></div>
+<h3>实验数据保存在哪里</h3>
+<p class=""><strong>artifacts 是实验数据根目录。</strong> lab-config.json 指定默认路径；monitor.sqlite3 存事件，runs/ 存轨迹、数据清单、检查点和报告。注册表指向发布模型，live-session.json 保存采集意图。</p>
+<p class="">docs/origins/ 保留旧文档，migration/ 保留迁移材料。<strong>启动命令以本页和当前 README 为准。</strong></p>
+</section>
+<section class="doc-chapter" id="doc-reading" data-doc-chapter="reading" aria-labelledby="doc-reading-title"><h2 id="doc-reading-title" tabindex="-1"><span data-no-i18n>06</span>阅读与学习路线</h2>
+<p class="doc-keypoint"><strong>先运行、再看记录、最后读代码。</strong> 按“基线 → 决策 → 观测 → 训练 → 发布”理解完整闭环。</p>
+<ol class="doc-reading">
+<li><h3>先跑规则基线</h3><p>固定种子，单步运行搬运基线，观察抓取到撤离；区分动作执行与任务成功。</p><div class="doc-source"><code data-doc-file>src/embodied_jev/physics.py</code><code data-doc-file>src/embodied_jev/planning.py</code></div></li>
+<li><h3>跟踪一次决策</h3><p>对照输入、候选、选择、拒绝和动作后状态；再切换 XYZ 与分层模式看分工差异。</p><div class="doc-source"><code data-doc-file>src/embodied_jev/runtime.py</code><code data-doc-file>src/embodied_jev/policies.py</code></div></li>
+<li><h3>区分三种观测</h3><p>对比真值与 RGB-D 的数据来源、相机和缺失目标处理；支持视觉的模型再测试直接图像。</p><div class="doc-source"><code data-doc-file>src/embodied_jev/perception.py</code><code data-doc-file>src/embodied_rsi/configured_sim.py</code></div></li>
+<li><h3>追踪成功数据到梯度</h3><p>沿一条成功轨迹找到过滤记录、训练样本、数据哈希与 loss，再确认 scorer 的可训练参数。</p><div class="doc-source"><code data-doc-file>src/embodied_rsi/self_improvement.py</code><code data-doc-file>src/embodied_rsi/task_rsi.py</code></div></li>
+<li><h3>追踪候选到发布</h3><p>对照开发选点、独立评测、发布门槛和 checkpoint 哈希，解释候选为何发布或被保留。</p><div class="doc-source"><code data-doc-file>src/embodied_rsi/evaluation.py</code><code data-doc-file>src/embodied_rsi/deployment.py</code></div></li>
+</ol>
+</section>
+<section class="doc-chapter" id="doc-install" data-doc-chapter="install" aria-labelledby="doc-install-title"><h2 id="doc-install-title" tabindex="-1"><span data-no-i18n>07</span>安装与运行</h2>
+<p class="doc-keypoint"><strong>分别安装后端与 Web UI，由一个 Python 服务提供完整页面。</strong> 以下命令在项目根目录执行，适用 macOS / Linux；本地训练额外安装 RSI 环境。</p>
+<div class="doc-section-links" role="group" aria-label="章节内导航"><button type="button" data-doc-jump="install-prerequisites">环境要求</button><button type="button" data-doc-jump="install-backend">后端安装</button><button type="button" data-doc-jump="install-web">Web UI 安装</button><button type="button" data-doc-jump="install-rsi">RSI 训练环境</button><button type="button" data-doc-jump="install-launch">启动服务</button><button type="button" data-doc-jump="install-verify">验证与配置</button><button type="button" data-doc-jump="install-development">前端开发</button></div>
+<div class="doc-subsection" id="doc-install-prerequisites"><h3 id="doc-install-prerequisites-title" tabindex="-1">1. 准备工具与版本</h3>
+<div class="doc-table "><table><thead><tr><th scope="col">工具 / 环境</th><th scope="col">本项目的要求</th></tr></thead><tbody><tr><td>Git 与 uv</td><td>先安装并确保命令在 PATH 中。Git 获取固定的上游代码；uv 创建 Python 环境并安装依赖。</td></tr><tr><td>Python 3.12</td><td>使用 Python 3.12。当前锁定的 NumPy 要求 ≥3.12，虽然项目元数据的最低声明仍是 3.11。</td></tr><tr><td>Node.js 与 npm</td><td>Node 20.x 的 20.19+，或 ≥22.12；npm 用于安装和构建 UI。</td></tr><tr><td>图形与模型资源</td><td>规则基线不需要 API Key 或模型权重。MuJoCo 画面仍需要可用的图形后端；本地 RSI 还需 PyTorch 和对应权重，首次加载可能下载模型。</td></tr></tbody></table></div>
+<div class="doc-command"><div class="doc-command-head"><span>先检查工具是否可用</span><button type="button" data-doc-copy="doc-tools-command">复制命令</button></div><pre id="doc-tools-command" tabindex="0"><code>git --version
+uv --version
+node --version
+npm --version</code></pre></div>
+</div>
+<div class="doc-subsection" id="doc-install-backend"><h3 id="doc-install-backend-title" tabindex="-1">2. 安装 Python 后端</h3>
+<p><strong>首次安装：创建 .venv，再运行 bootstrap。</strong> 脚本按 constraints-simulation.txt 安装依赖，按 upstreams.lock.json 获取固定上游代码。</p>
+<div class="doc-command"><div class="doc-command-head"><span>后端 · 全新环境</span><button type="button" data-doc-copy="doc-install-command">复制命令</button></div><pre id="doc-install-command" tabindex="0"><code>uv python install 3.12
+uv venv --python 3.12 .venv
+.venv/bin/python scripts/bootstrap.py</code></pre></div>
+<p>安装后获得 FastAPI、MuJoCo 等依赖及三个项目命令。<strong>已有 .venv 无需重建</strong>，更新依赖只运行 bootstrap；基线和远端测试不需在此安装 PyTorch。</p>
+<div class="doc-command"><div class="doc-command-head"><span>检查后端导入与入口</span><button type="button" data-doc-copy="doc-backend-check-command">复制命令</button></div><pre id="doc-backend-check-command" tabindex="0"><code>.venv/bin/python -c &quot;import embodied_lab, embodied_jev, embodied_rsi, fastapi, mujoco; print(&#x27;Backend imports OK&#x27;)&quot;
+.venv/bin/embodied-lab --help</code></pre></div>
+<div class="doc-source"><code data-doc-file>scripts/bootstrap.py</code><code data-doc-file>pyproject.toml</code><code data-doc-file>constraints-simulation.txt</code><code data-doc-file>upstreams.lock.json</code></div>
+</div>
+<div class="doc-subsection" id="doc-install-web"><h3 id="doc-install-web-title" tabindex="-1">3. 安装并构建 Web UI</h3>
+<p><strong>在项目根目录执行。</strong> npm ci 按锁文件安装，npm run build 构建 Web UI；后端安装不会自动完成这一步。</p>
+<div class="doc-command"><div class="doc-command-head"><span>Web UI · 安装与构建</span><button type="button" data-doc-copy="doc-web-command">复制命令</button></div><pre id="doc-web-command" tabindex="0"><code>npm ci
+npm run build</code></pre></div>
+<p><strong>frontend 构建模型工具，embodied_rsi/web 提供统一页面。</strong> Vite 输出到 src/embodied_jev/web；导航、训练、报告、Doc 和翻译由 Python 直接提供。修改源码，不手改生成文件。</p>
+<p><strong>构建后只需启动 Python 服务。</strong> 改动 frontend 或共享翻译后重新构建；直接提供的文档文件通常刷新即可。先完成构建，再运行浏览器测试。</p>
+<div class="doc-source"><code data-doc-file>package.json</code><code data-doc-file>package-lock.json</code><code data-doc-file>vite.config.js</code><code data-doc-file>frontend/lab-entry.js</code><code data-doc-file>src/embodied_rsi/web/simulation.html</code></div>
+</div>
+<div class="doc-subsection" id="doc-install-rsi"><h3 id="doc-install-rsi-title" tabindex="-1">4. 按需安装本地 RSI 训练环境</h3>
+<p><strong>本地 RSI 推理／训练需要独立 .venv-rsi。</strong> 安装固定 RSI-Jev 与 PyTorch；规则基线和远端 API 实验可跳过。</p>
+<div class="doc-command"><div class="doc-command-head"><span>独立 RSI 环境 · 首次安装</span><button type="button" data-doc-copy="doc-rsi-command">复制命令</button></div><pre id="doc-rsi-command" tabindex="0"><code>uv venv --python 3.12 .venv-rsi
+.venv/bin/python scripts/bootstrap.py --rsi</code></pre></div>
+<p>已有环境只需按需运行第二条安装命令。启动器自动检测 .venv-rsi/bin/python；<strong>安装依赖不等于已有模型权重</strong>，首次加载可能下载 checkpoint。</p>
+<p>设备默认自动选择，也可用 EMBODIED_RSI_DEVICE 指定 mps、cuda 或 cpu，须匹配硬件与 PyTorch。训练耗时取决于模型、数据和设备。</p>
+</div>
+<div class="doc-subsection" id="doc-install-launch"><h3 id="doc-install-launch-title" tabindex="-1">5. 启动统一服务与选择数据目录</h3>
+<div class="doc-command"><div class="doc-command-head"><span>启动完整工作台</span><button type="button" data-doc-copy="doc-serve-command">复制命令</button></div><pre id="doc-serve-command" tabindex="0"><code>.venv/bin/embodied-lab serve</code></pre></div>
+<p><strong>打开 http://127.0.0.1:8092/simulation。</strong> 保持终端运行；端口和数据目录来自 lab-config.json，默认相对路径以项目根目录为基准。</p>
+<p><strong>用新目录和 8093 端口隔离实验。</strong> 仅跑基线时省略 --rsi-python 及路径；显式 --artifacts 的相对路径以当前工作目录为基准。</p>
+<div class="doc-command"><div class="doc-command-head"><span>独立数据目录与 8093 端口</span><button type="button" data-doc-copy="doc-isolated-command">复制命令</button></div><pre id="doc-isolated-command" tabindex="0"><code>.venv/bin/embodied-lab --artifacts artifacts/learning-sandbox dashboard \
+  --port 8093 --rsi-python &quot;$PWD/.venv-rsi/bin/python&quot;</code></pre></div>
+<p class="doc-note">隔离地址：http://127.0.0.1:8093/simulation。新目录从空白状态开始，已有目录会读取历史模型和会话意图。<strong>网页更新无需重启后端</strong>；依赖变更需重启时先结束当前任务。</p>
+</div>
+<div class="doc-subsection" id="doc-install-verify"><h3 id="doc-install-verify-title" tabindex="-1">6. 验证安装并配置第一个实验</h3>
+<div class="doc-command"><div class="doc-command-head"><span>在另一个终端检查服务</span><button type="button" data-doc-copy="doc-service-check-command">复制命令</button></div><pre id="doc-service-check-command" tabindex="0"><code>curl --fail --noproxy 127.0.0.1 http://127.0.0.1:8092/api/simulation/capabilities</code></pre></div>
+<p>接口应返回 JSON。然后进入模型测试，用固定种子的搬运基线单步并跑完一局，检查动作、接触、结果与日志。<strong>这验证环境，不代表 RSI 已学会任务。</strong></p>
+<p>在模型配置填写接口类型、Base URL、模型 ID 和 Key，再做输入测试。<strong>保存不调用，测试与运行会请求模型。</strong> 密钥使用系统凭证存储；不可用时仅保留本次会话。.env 不自动加载。</p>
+<p>训练前确认本地 checkpoint 与解释器，再设定动作、观测、相机和采集／训练阈值。<strong>当前训练器不更新远端 API 权重。</strong></p>
+<details class="doc-detail"><summary>展开：页面、渲染与端口排查</summary><p>页面空白先查构建和资源请求；画面失败再查图形后端。默认 macOS 用 CGL、Linux 用 EGL，MUJOCO_GL 可覆盖。无界面 Linux 需对应图形库；端口冲突改用隔离端口。</p></details>
+</div>
+<div class="doc-subsection" id="doc-install-development"><h3 id="doc-install-development-title" tabindex="-1">7. 可选：开发 Web UI</h3>
+<p><strong>Vite 用于模型工具的开发预览。</strong> 保持 Python 服务运行，在另一个终端启动下面的命令。</p>
+<div class="doc-command"><div class="doc-command-head"><span>模型工作台的 Vite 开发预览</span><button type="button" data-doc-copy="doc-web-dev-command">复制命令</button></div><pre id="doc-web-dev-command" tabindex="0"><code>npm run dev</code></pre></div>
+<p>打开终端给出的地址，通常为 http://127.0.0.1:5173。/api 代理到 8092 的 /workbench，改端口需同步 vite.config.js。<strong>完整工作台仍在 8092 /simulation</strong>；修改完成后构建并验证集成页面。</p>
+</div>
+</section>
+<section class="doc-chapter" id="doc-reproduce" data-doc-chapter="reproduce" aria-labelledby="doc-reproduce-title"><h2 id="doc-reproduce-title" tabindex="-1"><span data-no-i18n>08</span>复现与验证</h2>
+<h3>先验证物理链路</h3>
+<div class="doc-command"><div class="doc-command-head"><span>两局基线采集</span><button type="button" data-doc-copy="doc-smoke-command">复制命令</button></div><pre id="doc-smoke-command" tabindex="0"><code>.venv/bin/embodied-rsi --artifacts artifacts/doc-smoke collect \
+  --tasks transfer --episodes 2 --seed-start 0 --max-steps 20</code></pre></div>
+<p class=""><strong>先验证物理与记录链路。</strong> 该命令使用规则教师，无需模型请求；检查运行 ID、episodes.jsonl 和完成率。教师轨迹不计入模型自采成功。</p>
+<h3>再复现一轮本地训练</h3>
+<p class=""><strong>固定起点与协议，再运行闭环。</strong> 用新目录、相同初始 checkpoint、任务、种子范围和预算。采集足够成功数据后，跟踪过滤、拟合、开发选点、独立评测与发布。</p>
+<p class="">保存 Git／上游版本、环境、父模型哈希、数据清单、评测种子和执行配置。<strong>同种子不保证同轨迹</strong>：模型版本、采样和硬件仍有影响；冒烟通过也不等于达到发布门槛。</p>
+<details class="doc-detail"><summary>开发检查与实验脚本</summary>
+<div class="doc-command"><div class="doc-command-head"><span>构建与验证</span><button type="button" data-doc-copy="doc-check-command">复制命令</button></div><pre id="doc-check-command" tabindex="0"><code>.venv/bin/python -m pytest
+npm run build
+EMBODIED_TEST_CHANNEL=chrome npm run test:lab-ui
+.venv/bin/python scripts/reproduce.py --help</code></pre></div>
+<p class="">浏览器测试使用独立端口和数据目录，需要已安装 Chrome。完整实验按 --help 选择阶段；<strong>先构建，再测试</strong>，不要中途重建资源。</p>
+</details>
+</section>
+<section class="doc-chapter" id="doc-help" data-doc-chapter="help" aria-labelledby="doc-help-title"><h2 id="doc-help-title" tabindex="-1"><span data-no-i18n>09</span>常见问题</h2>
+<details class="doc-detail"><summary>为什么采集停止了，self-improve 仍在运行？</summary><p><strong>采集与训练是两个任务。</strong> 已启动的 self-improve 会继续；在下方报告查看阶段，必要时单独停止作业。</p></details>
+<details class="doc-detail"><summary>为什么 loss 下降却没有发布新模型？</summary><p><strong>loss 衡量拟合，独立评测决定发布。</strong> 检查提升、置信区间、任务覆盖和风险门槛。</p></details>
+<details class="doc-detail"><summary>如何确认当前运行的是哪个模型？</summary><p>核对左侧模型、版本、checkpoint 与 SHA256，再对照本局日志。<strong>训练候选不会在局中替换当前模型。</strong></p></details>
+<details class="doc-detail"><summary>为什么配置了 API，训练页仍要求本地模型？</summary><p><strong>远端 API 提供推理，不提供当前训练器可更新的参数。</strong> 自主训练适配本地文本／结构化 RSI；其他模型需另接训练接口。</p></details>
+<details class="doc-detail"><summary>uv、RSI 环境或模型资源找不到怎么办？</summary><p>检查项目根目录、uv 的 PATH 和 bootstrap 结果，再核对 .venv-rsi/bin/python、checkpoint 路径与哈希。下载或加载失败以终端和过程日志为准。</p></details>
+<details class="doc-detail"><summary>页面空白、资源过期或端口被占用怎么办？</summary><p>完成 npm ci 和 npm run build，再刷新 /simulation。端口占用时使用独立端口；<strong>刷新界面无需重启正在训练的后端。</strong></p></details>
+<details class="doc-detail"><summary>为什么日志 JSON 或模型回复没有翻译？</summary><p><strong>界面翻译，原始证据保留。</strong> 模型 ID、用户输入、原始回复、JSON 和代码保持原样。默认英文，语言选择保存在浏览器。</p></details>
+<div class="doc-reading-more"><h3>继续阅读仓库文档</h3>
+<div><code data-doc-file>README.md</code><span>统一入口与使用说明</span></div>
+<div><code data-doc-file>docs/ARCHITECTURE.md</code><span>学习闭环与接口</span></div>
+<div><code data-doc-file>docs/TECHNICAL_GUIDE.md</code><span>模型协议与技术细节</span></div>
+<div><code data-doc-file>docs/VISION.md</code><span>相机与视觉观测</span></div>
+<div><code data-doc-file>docs/PLANNING.md</code><span>动作规划协议</span></div>
+<div><code data-doc-file>docs/TEST_PLAN.md</code><span>验证目标与实验设计</span></div>
+</div>
+</section>
+<div class="doc-end"><button type="button" data-doc-section="background">回到文档顶部 ↑</button><span id="doc-copy-status" role="status" aria-live="polite"></span></div></article></div>

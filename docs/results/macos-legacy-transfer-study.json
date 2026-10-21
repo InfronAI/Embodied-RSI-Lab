@@ -1,0 +1,673 @@
+{
+  "date": "2026-10-20",
+  "status": "completed",
+  "scope": "Three-round transfer study with the early nine-skill protocol (staged prompts and strict grasp disabled), on Apple MPS / FP32.",
+  "environment_reference": "docs/results/macos-learning-loop-verification.json",
+  "cold_collection": {
+    "episodes": 12,
+    "successful_episodes": 0,
+    "success_rate": 0.0,
+    "episodes_file": "artifacts/reproduction-20261019/mps/transfer-legacy/runs/explore-20261020-023643-46c51e/episodes.jsonl",
+    "protocol": {
+      "baseline": "shgao/rsi-jev-v1.0-qwen3.5-0.8b@f9248caceb89caf2e6c968ea33bf0d6eb7f957b0",
+      "revision": "f9248caceb89caf2e6c968ea33bf0d6eb7f957b0",
+      "episode_protocol": {
+        "staged_prompts": false,
+        "strict_grasp": false
+      },
+      "seed_start": 0,
+      "max_attempts": 12,
+      "stop_after_successes": 0,
+      "max_steps": 20,
+      "randomize_scene": false,
+      "sampling": "one NumPy RNG per scene seed, as in the live simulation",
+      "source": "new autonomous original-model attempts; no teacher initialization"
+    }
+  },
+  "artifacts": "artifacts/reproduction-20261019/mps/transfer-legacy",
+  "complete": true,
+  "rounds": [
+    {
+      "round": 1,
+      "collection": "explore-20261020-082733-cdb37d",
+      "dataset": "artifacts/reproduction-20261019/mps/transfer-legacy/datasets/success-explore-20261020-082733-cdb37d",
+      "exploration_success_rate": 0.1,
+      "successful_episodes": 3,
+      "scene_suite": {
+        "train": 1030000,
+        "dev": 1040000,
+        "release": 1050000
+      },
+      "training": "self-train-20261020-084232-fc96f8",
+      "evaluation": "evaluate-20261020-090657-fc42ca",
+      "success_rate": 0.0,
+      "parent_success_rate": 0.0,
+      "status": "retained_current_model",
+      "collection_summary": {
+        "episodes": 30,
+        "successful_episodes": 3,
+        "success_rate": 0.1,
+        "failed_episodes": 27
+      },
+      "dataset_summary": {
+        "episodes_total": 42,
+        "successful_episodes": 3,
+        "cases": {
+          "train": 40,
+          "dev": 0,
+          "test": 0
+        },
+        "filtered_failure_actions": 10,
+        "sha256": {
+          "train": "57543607fa08ee512401d31f56400f3dc4805aeacbbbdd1c47b995cf6dd8598b",
+          "dev": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "training_summary": {
+        "objective": "successful_episode_replay",
+        "initial_success_rate": 0.0,
+        "success_rate": 0.0,
+        "selected_step": 0,
+        "training_samples": 40,
+        "successful_episodes": 3,
+        "checkpoint": "artifacts/reproduction-20261019/mps/transfer-legacy/runs/self-train-20261020-084232-fc96f8/checkpoint",
+        "train_seconds": 442.22511925001163
+      },
+      "loss_first_last": [
+        2.1644840240478516,
+        1.9316778182983398
+      ],
+      "development": [
+        {
+          "step": 0,
+          "dev_success_rate": 0.0,
+          "dev_risk_count": 0
+        },
+        {
+          "step": 25,
+          "dev_success_rate": 0.0,
+          "dev_risk_count": 0
+        },
+        {
+          "step": 50,
+          "dev_success_rate": 0.0,
+          "dev_risk_count": 0
+        },
+        {
+          "step": 75,
+          "dev_success_rate": 0.0,
+          "dev_risk_count": 0
+        },
+        {
+          "step": 100,
+          "dev_success_rate": 0.0,
+          "dev_risk_count": 2
+        }
+      ],
+      "release_report": {
+        "pairs": 90,
+        "success_rate": 0.0,
+        "champion_success_rate": 0.0,
+        "paired_gain": 0.0,
+        "gain_ci95": [
+          0.0,
+          0.0
+        ],
+        "by_task": {
+          "transfer": {
+            "pairs": 90,
+            "candidate_success_rate": 0.0,
+            "champion_success_rate": 0.0,
+            "delta": 0.0
+          }
+        },
+        "risks": {
+          "collisions": {
+            "candidate": 0,
+            "champion": 0
+          },
+          "drops": {
+            "candidate": 0,
+            "champion": 0
+          },
+          "rejections": {
+            "candidate": 0,
+            "champion": 0
+          }
+        },
+        "mean_steps": 5.488888888888889,
+        "p95_latency_ms": 16891.03591638326,
+        "gate": {
+          "passed": false,
+          "checks": {
+            "enough_pairs": true,
+            "task_coverage": true,
+            "success_gain": false,
+            "confidence_interval": false,
+            "no_task_regression": true,
+            "no_risk_increase": true
+          },
+          "thresholds": {
+            "min_pairs": 90,
+            "gain": 0.05,
+            "regression": 0.02,
+            "tasks": [
+              "transfer"
+            ]
+          }
+        },
+        "scope": "privileged-state / code-generated skills / partial simulator collision checks",
+        "candidate_checkpoint": "artifacts/reproduction-20261019/mps/transfer-legacy/runs/self-train-20261020-084232-fc96f8/checkpoint",
+        "candidate_sha256": "586d9da535120103fface6a0cffa07b49f97161d1c2cbd228043c26f755bd3a3",
+        "champion": "shgao/rsi-jev-v1.0-qwen3.5-0.8b@f9248caceb89caf2e6c968ea33bf0d6eb7f957b0",
+        "champion_sha256": "699ae003a52fcb7c363663a7e5e68843d166388f0955bdd5898d834d9050b8e2",
+        "model_backend": "rsi-jev",
+        "candidate_reloaded": true,
+        "scene_distribution": "upstream-default"
+      }
+    },
+    {
+      "round": 2,
+      "collection": "explore-20261020-095947-c9fc3f",
+      "dataset": "artifacts/reproduction-20261019/mps/transfer-legacy/datasets/success-explore-20261020-095947-c9fc3f",
+      "exploration_success_rate": 0.16666666666666666,
+      "successful_episodes": 8,
+      "scene_suite": {
+        "train": 1060000,
+        "dev": 1070000,
+        "release": 1080000
+      },
+      "training": "self-train-20261020-101549-40722a",
+      "evaluation": "evaluate-20261020-103243-c293ed",
+      "success_rate": 0.022222222222222223,
+      "parent_success_rate": 0.0,
+      "status": "retained_current_model",
+      "collection_summary": {
+        "episodes": 30,
+        "successful_episodes": 5,
+        "success_rate": 0.16666666666666666,
+        "failed_episodes": 25
+      },
+      "dataset_summary": {
+        "episodes_total": 72,
+        "successful_episodes": 8,
+        "cases": {
+          "train": 81,
+          "dev": 0,
+          "test": 0
+        },
+        "filtered_failure_actions": 22,
+        "sha256": {
+          "train": "927efb6b8023c71fd70851dac06f124bd87fb6089e60a4ad58986faf0e2427bd",
+          "dev": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "training_summary": {
+        "objective": "successful_episode_replay",
+        "initial_success_rate": 0.0,
+        "success_rate": 0.1,
+        "selected_step": 100,
+        "training_samples": 81,
+        "successful_episodes": 8,
+        "checkpoint": "artifacts/reproduction-20261019/mps/transfer-legacy/runs/self-train-20261020-101549-40722a/checkpoint",
+        "train_seconds": 992.9563804590143
+      },
+      "loss_first_last": [
+        2.1469507217407227,
+        1.6579508781433105
+      ],
+      "development": [
+        {
+          "step": 0,
+          "dev_success_rate": 0.0,
+          "dev_risk_count": 0
+        },
+        {
+          "step": 25,
+          "dev_success_rate": 0.0,
+          "dev_risk_count": 0
+        },
+        {
+          "step": 50,
+          "dev_success_rate": 0.0,
+          "dev_risk_count": 2
+        },
+        {
+          "step": 75,
+          "dev_success_rate": 0.0,
+          "dev_risk_count": 0
+        },
+        {
+          "step": 100,
+          "dev_success_rate": 0.1,
+          "dev_risk_count": 4
+        }
+      ],
+      "release_report": {
+        "pairs": 90,
+        "success_rate": 0.022222222222222223,
+        "champion_success_rate": 0.0,
+        "paired_gain": 0.022222222222222223,
+        "gain_ci95": [
+          0.0,
+          0.05555555555555555
+        ],
+        "by_task": {
+          "transfer": {
+            "pairs": 90,
+            "candidate_success_rate": 0.022222222222222223,
+            "champion_success_rate": 0.0,
+            "delta": 0.022222222222222223
+          }
+        },
+        "risks": {
+          "collisions": {
+            "candidate": 0,
+            "champion": 0
+          },
+          "drops": {
+            "candidate": 18,
+            "champion": 0
+          },
+          "rejections": {
+            "candidate": 2,
+            "champion": 0
+          }
+        },
+        "mean_steps": 10.333333333333334,
+        "p95_latency_ms": 23794.1018892324,
+        "gate": {
+          "passed": false,
+          "checks": {
+            "enough_pairs": true,
+            "task_coverage": true,
+            "success_gain": false,
+            "confidence_interval": false,
+            "no_task_regression": true,
+            "no_risk_increase": false
+          },
+          "thresholds": {
+            "min_pairs": 90,
+            "gain": 0.05,
+            "regression": 0.02,
+            "tasks": [
+              "transfer"
+            ]
+          }
+        },
+        "scope": "privileged-state / code-generated skills / partial simulator collision checks",
+        "candidate_checkpoint": "artifacts/reproduction-20261019/mps/transfer-legacy/runs/self-train-20261020-101549-40722a/checkpoint",
+        "candidate_sha256": "91159239b2799d82f94ca7fa943999063cb631d36d8966b3db4807307a3e493a",
+        "champion": "shgao/rsi-jev-v1.0-qwen3.5-0.8b@f9248caceb89caf2e6c968ea33bf0d6eb7f957b0",
+        "champion_sha256": "699ae003a52fcb7c363663a7e5e68843d166388f0955bdd5898d834d9050b8e2",
+        "model_backend": "rsi-jev",
+        "candidate_reloaded": true,
+        "scene_distribution": "upstream-default"
+      }
+    },
+    {
+      "round": 3,
+      "collection": "explore-20261020-115127-96959a",
+      "dataset": "artifacts/reproduction-20261019/mps/transfer-legacy/datasets/success-explore-20261020-115127-96959a",
+      "exploration_success_rate": 0.03333333333333333,
+      "successful_episodes": 9,
+      "scene_suite": {
+        "train": 1090000,
+        "dev": 1100000,
+        "release": 1110000
+      },
+      "training": "self-train-20261020-120845-bae4bc",
+      "evaluation": "evaluate-20261020-121514-8e44ae",
+      "success_rate": 0.0,
+      "parent_success_rate": 0.0,
+      "status": "retained_current_model",
+      "collection_summary": {
+        "episodes": 30,
+        "successful_episodes": 1,
+        "success_rate": 0.03333333333333333,
+        "failed_episodes": 29
+      },
+      "dataset_summary": {
+        "episodes_total": 102,
+        "successful_episodes": 9,
+        "cases": {
+          "train": 83,
+          "dev": 0,
+          "test": 0
+        },
+        "filtered_failure_actions": 24,
+        "sha256": {
+          "train": "c8bccc6ba6a0269ba7af0533e03986f4731c959bab1314f34c84e74f7bc960dc",
+          "dev": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "test": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "training_summary": {
+        "objective": "successful_episode_replay",
+        "initial_success_rate": 0.0,
+        "success_rate": 0.0,
+        "selected_step": 0,
+        "training_samples": 83,
+        "successful_episodes": 9,
+        "checkpoint": "artifacts/reproduction-20261019/mps/transfer-legacy/runs/self-train-20261020-120845-bae4bc/checkpoint",
+        "train_seconds": 371.3292425839463
+      },
+      "loss_first_last": [
+        2.393078565597534,
+        1.8033994436264038
+      ],
+      "development": [
+        {
+          "step": 0,
+          "dev_success_rate": 0.0,
+          "dev_risk_count": 0
+        },
+        {
+          "step": 25,
+          "dev_success_rate": 0.0,
+          "dev_risk_count": 0
+        },
+        {
+          "step": 50,
+          "dev_success_rate": 0.0,
+          "dev_risk_count": 0
+        },
+        {
+          "step": 75,
+          "dev_success_rate": 0.0,
+          "dev_risk_count": 0
+        },
+        {
+          "step": 100,
+          "dev_success_rate": 0.0,
+          "dev_risk_count": 0
+        }
+      ],
+      "release_report": {
+        "pairs": 90,
+        "success_rate": 0.0,
+        "champion_success_rate": 0.0,
+        "paired_gain": 0.0,
+        "gain_ci95": [
+          0.0,
+          0.0
+        ],
+        "by_task": {
+          "transfer": {
+            "pairs": 90,
+            "candidate_success_rate": 0.0,
+            "champion_success_rate": 0.0,
+            "delta": 0.0
+          }
+        },
+        "risks": {
+          "collisions": {
+            "candidate": 0,
+            "champion": 0
+          },
+          "drops": {
+            "candidate": 0,
+            "champion": 0
+          },
+          "rejections": {
+            "candidate": 0,
+            "champion": 0
+          }
+        },
+        "mean_steps": 5.5,
+        "p95_latency_ms": 7090.572008310117,
+        "gate": {
+          "passed": false,
+          "checks": {
+            "enough_pairs": true,
+            "task_coverage": true,
+            "success_gain": false,
+            "confidence_interval": false,
+            "no_task_regression": true,
+            "no_risk_increase": true
+          },
+          "thresholds": {
+            "min_pairs": 90,
+            "gain": 0.05,
+            "regression": 0.02,
+            "tasks": [
+              "transfer"
+            ]
+          }
+        },
+        "scope": "privileged-state / code-generated skills / partial simulator collision checks",
+        "candidate_checkpoint": "artifacts/reproduction-20261019/mps/transfer-legacy/runs/self-train-20261020-120845-bae4bc/checkpoint",
+        "candidate_sha256": "0fe2d34e519794e537245f1a26a10eff8cddad03c61c0b3c602c6000d19b627d",
+        "champion": "shgao/rsi-jev-v1.0-qwen3.5-0.8b@f9248caceb89caf2e6c968ea33bf0d6eb7f957b0",
+        "champion_sha256": "699ae003a52fcb7c363663a7e5e68843d166388f0955bdd5898d834d9050b8e2",
+        "model_backend": "rsi-jev",
+        "candidate_reloaded": true,
+        "scene_distribution": "upstream-default"
+      }
+    }
+  ],
+  "final_audit": {
+    "run": "study-20261020-082728-fae15c",
+    "protocol_sha256": "1c8afabc1bc17a72867e41d56981360f66f4f5a526c96c5f99654366e63d1993",
+    "tasks": [
+      "transfer"
+    ],
+    "audit": [
+      {
+        "label": "V0",
+        "checkpoint": "shgao/rsi-jev-v1.0-qwen3.5-0.8b@f9248caceb89caf2e6c968ea33bf0d6eb7f957b0",
+        "status": "baseline",
+        "sha256": "699ae003a52fcb7c363663a7e5e68843d166388f0955bdd5898d834d9050b8e2",
+        "success_rate": 0.0,
+        "successful_episodes": 0,
+        "episodes": 30
+      },
+      {
+        "label": "V1",
+        "checkpoint": "artifacts/reproduction-20261019/mps/transfer-legacy/runs/self-train-20261020-084232-fc96f8/checkpoint",
+        "status": "retained_current_model",
+        "round": 1,
+        "sha256": "586d9da535120103fface6a0cffa07b49f97161d1c2cbd228043c26f755bd3a3",
+        "success_rate": 0.0,
+        "successful_episodes": 0,
+        "episodes": 30
+      },
+      {
+        "label": "V2",
+        "checkpoint": "artifacts/reproduction-20261019/mps/transfer-legacy/runs/self-train-20261020-101549-40722a/checkpoint",
+        "status": "retained_current_model",
+        "round": 2,
+        "sha256": "91159239b2799d82f94ca7fa943999063cb631d36d8966b3db4807307a3e493a",
+        "success_rate": 0.0,
+        "successful_episodes": 0,
+        "episodes": 30
+      },
+      {
+        "label": "V3",
+        "checkpoint": "artifacts/reproduction-20261019/mps/transfer-legacy/runs/self-train-20261020-120845-bae4bc/checkpoint",
+        "status": "retained_current_model",
+        "round": 3,
+        "sha256": "0fe2d34e519794e537245f1a26a10eff8cddad03c61c0b3c602c6000d19b627d",
+        "success_rate": 0.0,
+        "successful_episodes": 0,
+        "episodes": 30
+      }
+    ],
+    "deployed_audit_rates": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "candidate_strictly_increasing": false,
+    "deployed_strictly_increasing": false,
+    "final_vs_baseline": {
+      "pairs": 30,
+      "success_rate": 0.0,
+      "champion_success_rate": 0.0,
+      "paired_gain": 0.0,
+      "gain_ci95": [
+        0.0,
+        0.0
+      ],
+      "by_task": {
+        "transfer": {
+          "pairs": 30,
+          "candidate_success_rate": 0.0,
+          "champion_success_rate": 0.0,
+          "delta": 0.0
+        }
+      },
+      "risks": {
+        "collisions": {
+          "candidate": 0,
+          "champion": 0
+        },
+        "drops": {
+          "candidate": 0,
+          "champion": 0
+        },
+        "rejections": {
+          "candidate": 0,
+          "champion": 0
+        }
+      },
+      "mean_steps": 6.8,
+      "p95_latency_ms": 1858.5390635277145,
+      "gate": {
+        "passed": false,
+        "checks": {
+          "enough_pairs": false,
+          "task_coverage": true,
+          "success_gain": false,
+          "confidence_interval": false,
+          "no_task_regression": true,
+          "no_risk_increase": true
+        },
+        "thresholds": {
+          "min_pairs": 90,
+          "gain": 0.05,
+          "regression": 0.02,
+          "tasks": [
+            "transfer"
+          ]
+        }
+      },
+      "scope": "privileged-state / code-generated skills / partial simulator collision checks"
+    },
+    "audit_used_for_release": false,
+    "conclusion": "未观察到候选完成率逐轮上升",
+    "updated_models": 0
+  },
+  "protocol": {
+    "tasks": [
+      "transfer"
+    ],
+    "rounds": 3,
+    "explore_episodes": 30,
+    "steps": 100,
+    "release_episodes": 90,
+    "audit_episodes": 30,
+    "max_steps": 20,
+    "scene_distribution": "upstream-default",
+    "baseline": "shgao/rsi-jev-v1.0-qwen3.5-0.8b@f9248caceb89caf2e6c968ea33bf0d6eb7f957b0",
+    "baseline_sha256": "699ae003a52fcb7c363663a7e5e68843d166388f0955bdd5898d834d9050b8e2",
+    "revision": "f9248caceb89caf2e6c968ea33bf0d6eb7f957b0",
+    "episode_protocol": {
+      "staged_prompts": false,
+      "strict_grasp": false
+    },
+    "seeded_source_jitter_m": 0.025,
+    "random_target": false,
+    "audit_seed_start": 1020000,
+    "audit_revealed": "after_all_training_rounds",
+    "labels": "actual successful model actions; no teacher initialization",
+    "release": "fresh paired task success, confidence interval and risk gates",
+    "hypothesis": "success improves across rounds; no monotonicity is imposed"
+  },
+  "raw_evidence_validation": {
+    "status": "passed",
+    "rounds": [
+      {
+        "round": 1,
+        "collected": 30,
+        "training": {
+          "actual_updates": 100,
+          "development_checks": 5,
+          "selected_step": 0,
+          "dataset_hashes_match": true
+        },
+        "pairs": 90,
+        "successes": {
+          "candidate": 0,
+          "champion": 0
+        }
+      },
+      {
+        "round": 2,
+        "collected": 30,
+        "training": {
+          "actual_updates": 100,
+          "development_checks": 5,
+          "selected_step": 100,
+          "dataset_hashes_match": true
+        },
+        "pairs": 90,
+        "successes": {
+          "candidate": 2,
+          "champion": 0
+        }
+      },
+      {
+        "round": 3,
+        "collected": 30,
+        "training": {
+          "actual_updates": 100,
+          "development_checks": 5,
+          "selected_step": 0,
+          "dataset_hashes_match": true
+        },
+        "pairs": 90,
+        "successes": {
+          "candidate": 0,
+          "champion": 0
+        }
+      }
+    ],
+    "audit_successes": {
+      "V0": 0,
+      "V1": 0,
+      "V2": 0,
+      "V3": 0
+    }
+  },
+  "success_contract_example": {
+    "source": "artifacts/reproduction-20261019/mps/transfer-legacy/runs/explore-20261020-115127-96959a/episodes.jsonl",
+    "seed": 1090006,
+    "legacy_success": true,
+    "episode_protocol": {
+      "staged_prompts": false,
+      "strict_grasp": false
+    },
+    "steps": 4,
+    "choices": [
+      "withdraw",
+      "descend",
+      "lower",
+      "carry"
+    ],
+    "observation": "The legacy success criterion accepted this episode without an explicit grasp or release command. This observation is not a strict_grasp_v1 result; the two protocols must be reported separately."
+  },
+  "reference": "docs/results/transfer-study.json",
+  "limitations": [
+    "The historical autonomous trajectories were not distributed; the collection is newly measured and does not reproduce every historical count.",
+    "The legacy success criterion differs from strict_grasp_v1; do not combine these rates with the current-protocol study.",
+    "The audit budget is the published 30 scenes per model; the formal default is 90.",
+    "No candidate was deployed. The final audit did not influence training or publication.",
+    "Wall-clock stage durations include recorded sleep intervals and a period of concurrent browser inference; they are not compute benchmarks.",
+    "Results cover privileged simulator state and programmed skills for transfer only."
+  ],
+  "serialization_note": "Local absolute paths are normalized for portability. Recorded hashes refer to the original experiment files, not the normalized JSON representation."
+}

@@ -1,0 +1,106 @@
+/* Shared by the shell and both shadow-root workspaces. */
+:root,
+:host {
+  color-scheme: dark;
+  --lab-bg: #0b1117;
+  --lab-surface: #121b24;
+  --lab-surface-raised: #182530;
+  --lab-input: #0d151d;
+  --lab-border: #25323e;
+  --lab-text: #e6eef4;
+  --lab-muted: #8b9cac;
+  --lab-accent: #73e3ba;
+  --lab-accent-soft: #183831;
+  --lab-accent-border: #345e50;
+  --lab-danger: #ff998b;
+  --lab-danger-soft: #35232a;
+  --lab-warning: #edc18b;
+  --lab-warning-soft: #332b1d;
+  --lab-blue: #7aaaff;
+  --lab-workspace-columns: 232px minmax(320px, 1fr) 390px;
+  --lab-workspace-gap: 10px;
+  --lab-radius: 8px;
+  --lab-control-radius: 6px;
+  --lab-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", sans-serif;
+  --lab-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --bg: var(--lab-bg);
+  --panel: var(--lab-surface);
+  --border: var(--lab-border);
+  --line: var(--lab-border);
+  --text: var(--lab-text);
+  --muted: var(--lab-muted);
+  --green: var(--lab-accent);
+  --blue: var(--lab-blue);
+  --red: var(--lab-danger);
+  --mono: var(--lab-mono);
+  color: var(--lab-text);
+  background: var(--lab-bg);
+  font-family: var(--lab-font);
+}
+*, *::before, *::after {box-sizing: border-box;}
+* {scrollbar-width: thin; scrollbar-color: #354858 transparent;}
+body {font-family: var(--lab-font);}
+button, input, select, textarea {font-family: var(--lab-font);}
+button {border-radius: var(--lab-control-radius);}
+button:disabled {cursor: not-allowed; opacity: .45; filter: none;}
+button.primary, .primary {
+  background: var(--lab-accent);
+  border: 1px solid transparent;
+  color: #10211d;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--lab-control-radius);
+}
+button.primary:hover:not(:disabled), .primary:hover:not(:disabled) {
+  background: #91edcc;
+  color: #10211d;
+  filter: none;
+}
+button.secondary, .secondary {
+  background: var(--lab-surface-raised);
+  border: 1px solid var(--lab-border);
+  color: var(--lab-text);
+  border-radius: var(--lab-control-radius);
+}
+button.secondary:hover:not(:disabled), .secondary:hover:not(:disabled) {background: #233440;}
+:is(input, select, textarea):not([type="checkbox"]):not([type="radio"]):not([type="range"]) {
+  color: var(--lab-text);
+  background: var(--lab-input);
+  border-color: var(--lab-border);
+  border-radius: var(--lab-control-radius);
+  font-size: 12px;
+}
+input::placeholder, textarea::placeholder {color: var(--lab-muted); opacity: .8;}
+input[type="checkbox"], input[type="radio"], input[type="range"] {accent-color: var(--lab-accent);}
+:is(button, a, input, select, textarea, summary):focus-visible {
+  outline: 2px solid var(--lab-accent);
+  outline-offset: 2px;
+}
+dialog, .connection-dialog {
+  background: var(--lab-surface);
+  color: var(--lab-text);
+  border: 1px solid var(--lab-border);
+  border-radius: var(--lab-radius);
+  padding: 20px;
+  max-height: calc(100dvh - 32px);
+  box-shadow: 0 20px 80px #0006;
+}
+dialog::backdrop {background: #030910b8; backdrop-filter: blur(3px);}
+.dialog-head h2, .dialog-heading h2 {font-size: 16px; margin: 0;}
+.panel, .stats article {border-radius: var(--lab-radius);}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {scroll-behavior: auto !important; transition: none !important;}
+}
+
+.dialog-head button, .dialog-heading .icon-button {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:32px; height:32px; padding:0;
+  border:1px solid var(--lab-border); border-radius:var(--lab-control-radius);
+  background:var(--lab-input); color:var(--lab-text); font-size:20px;
+}
+@media (min-width:1600px) {
+  :root, :host {--lab-workspace-columns:248px minmax(360px, 1fr) 430px; --lab-workspace-gap:12px;}
+}
+@media (max-width:1180px) and (min-width:901px) {
+  :root, :host {--lab-workspace-columns:198px minmax(270px, 1fr) 332px; --lab-workspace-gap:7px;}
+}

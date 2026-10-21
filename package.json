@@ -1,0 +1,23 @@
+{
+  "name": "embodied-lab",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "test:ui": "playwright test",
+    "build:site": "python3 scripts/build_site.py",
+    "test:site": "playwright test --config playwright.site.config.js",
+    "test:lab-ui": "playwright test --config playwright.lab.config.js"
+  },
+  "dependencies": {
+    "lucide": "0.468.0",
+    "three": "0.180.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.1",
+    "prettier": "^3.6.2",
+    "vite": "8.3.4"
+  }
+}

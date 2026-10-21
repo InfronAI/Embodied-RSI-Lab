@@ -1,0 +1,48 @@
+/* Training history uses the same theme and spacing as the live workspaces. */
+:host {display:block; font:13px/1.6 var(--lab-font); min-width:0;}
+[hidden] {display:none !important;}
+main {margin:0 !important; padding:16px !important; max-width:none !important;}
+main > header {margin:0 0 12px; display:flex; justify-content:flex-end; align-items:center; gap:12px;}
+main > header .live {margin:0;}
+main > header button {padding:7px 14px;}
+.report-layout {min-width:0; gap:12px;}
+.panel {padding:16px; margin-bottom:12px;}
+.panel-head {margin-bottom:12px; flex-wrap:wrap;}
+h2 {font-size:14px;}
+.stats {gap:12px; margin-bottom:12px;}
+.stats article {padding:14px 16px;}
+.stats strong {font-size:28px;}
+.data-grid {gap:12px;}
+select, input {min-width:0;}
+button {font-size:12px;}
+.report-history > summary {font-size:12px;}
+@media (max-width:820px) {
+  main {padding:10px !important;}
+  .report-layout, .data-grid {display:block;}
+  .panel {padding:14px;}
+}
+@media (max-width:560px) {
+  .stats {gap:10px;}
+  .stats article {padding:12px;}
+  .stats strong {font-size:24px;}
+  .panel-head {align-items:flex-start;}
+  .panel-head select {max-width:100%;}
+  .form-grid {gap:10px;}
+}
+
+/* Embedded report navigation stays compact while every original component remains available. */
+main > .report-heading {justify-content:space-between; margin-bottom:12px; flex-wrap:wrap;}
+.report-heading h2 {margin:0; font-size:14px;}
+.report-heading .report-actions {display:flex; align-items:center; flex-wrap:wrap; gap:8px;}
+.report-heading .report-actions button {font-size:11px; padding:6px 10px;}
+.report-section-nav {display:flex; gap:6px; flex-wrap:wrap; margin:0 0 14px;}
+.report-section-nav button {font-size:11px; padding:5px 10px; color:var(--lab-muted); background:transparent;}
+.report-section-nav button:hover {color:var(--lab-accent); border-color:var(--lab-accent-border);}
+.training-report :is(.panel, .report-stats, #training-visual, #replay-gallery, #round-comparison) {scroll-margin-top:12px;}
+@media (max-width:900px) {
+  .training-report :is(.panel, .report-stats, #training-visual, #replay-gallery, #round-comparison) {scroll-margin-top:calc(var(--lab-header-height, 50px) + 12px);}
+}
+@media (max-width:560px) {
+  .report-heading .report-actions {gap:6px;}
+  .report-heading .report-actions .live {width:auto; font-size:9px;}
+}

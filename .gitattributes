@@ -1,0 +1,2 @@
+# Preserve recorded CSV line endings and generated figure formatting.
+docs/results/** -text -whitespace

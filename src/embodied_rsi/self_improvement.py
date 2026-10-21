@@ -1,0 +1,399 @@
+"""Outcome-filtered RSI self imitation, with task success selecting and releasing models."""
+from __future__ import annotations
+
+import copy
+import hashlib
+import json
+import time
+from pathlib import Path
+
+import numpy as np
+
+from .deployment import current, deploy, load_policy
+from .monitor import Monitor
+from .sim import INSTRUCTIONS, episode
+from .stage_prompts import instructions_for
+from .storage import dumps, write_json
+from .task_training import TASKS, CompactLearner, task_score
+from .workflow import evaluate, reserve_suite
+
+
+class FrozenParentPolicy:
+    def __init__(self, learner, head):
+        self.learner, self.head = learner, head
+        from .episode_protocol import episode_protocol
+        self.episode_protocol = episode_protocol(learner)
+
+    def predict(self, state, criteria):
+        return self.learner.predict_with_head(self.head, state, criteria)
+
+
+def success_dataset(files, output, tasks=None, trace=None, execution=None):
+    """Only actually completed model trajectories; never substitute teacher decisions."""
+    from .execution import execution_settings, execution_key, episode_execution
+    selected_execution = execution_settings(execution) if execution is not None else None
+    output = Path(output)
+    if output.exists():
+        raise FileExistsError("Successful trajectory datasets are immutable")
+    output.mkdir(parents=True)
+    total, successes, cases, groups, filtered = 0, 0, [], {}, 0
+    seen = set()
+    for file in files:
+        with Path(file).open() as source:
+            for line in source:
+                if not line.endswith("\n"):
+                    break  # A continuous collector may currently be appending its next episode.
+                ep = json.loads(line)
+                if tasks and ep["task"] not in tasks:
+                    if trace:
+                        trace("trajectory_filter", {"episode_id": ep.get("episode_id"), "accepted": False,
+                              "reason": "task_out_of_scope", "task": ep["task"]})
+                    continue
+                if selected_execution is not None and execution_key(episode_execution(ep)) != execution_key(selected_execution):
+                    if trace:
+                        trace("trajectory_filter", {"episode_id": ep.get("episode_id"), "accepted": False,
+                              "reason": "execution_settings_mismatch", "execution": episode_execution(ep),
+                              "required_execution": selected_execution})
+                    continue
+                if ep.get("data_role") == "evaluation_only":
+                    raise ValueError("Evaluation-only trajectories cannot enter success replay")
+                if ep.get("episode_id"):
+                    if ep["episode_id"] in seen:
+                        if trace:
+                            trace("trajectory_filter", {"episode_id": ep["episode_id"], "accepted": False,
+                                  "reason": "duplicate_episode"})
+                        continue
+                    seen.add(ep["episode_id"])
+                total += 1
+                if not ep["success"]:
+                    if trace:
+                        trace("trajectory_filter", {"episode_id": ep.get("episode_id"), "accepted": False,
+                              "reason": "terminal_failure", "failure": ep.get("failure"),
+                              "source": str(file), "task": ep["task"], "seed": ep["seed"]})
+                    continue
+                if ep.get("source_policy") in {"teacher", "code", "code_no_recovery", "hybrid"}:
+                    raise ValueError("Self-improvement cannot relabel teacher/code/hybrid trajectories as model successes")
+                successes += 1
+                groups[ep["group"]] = "train"
+                for row in ep["records"]:
+                    if not row["executed"]:
+                        filtered += 1
+                        if trace:
+                            trace("trajectory_filter", {"episode_id": ep.get("episode_id"), "step": row["step"],
+                                  "accepted": False, "reason": row.get("rejection") or "action_not_executed"})
+                        continue
+                    before, after = row.get("before"), row.get("after")
+                    if before and after:
+                        empty_grasp = (row["choice"] == "grasp" or row.get("action", {}).get("gripper") == "close") and not after["held"]
+                        lost_grip = before["held"] and not after["held"] and row["choice"] not in {"release", "withdraw"} and row.get("action", {}).get("gripper") != "open"
+                        unheld_transport = row["choice"] in {"lift", "carry", "lower"} and not before["held"] and not after["held"]
+                        if empty_grasp or lost_grip or unheld_transport:
+                            filtered += 1
+                            if trace:
+                                trace("trajectory_filter", {"episode_id": ep.get("episode_id"), "step": row["step"],
+                                      "choice": row["choice"], "accepted": False, "before": before, "after": after,
+                                      "reason": "empty_grasp" if empty_grasp else "lost_grip" if lost_grip else "unheld_transport"})
+                            continue
+                    for decision in row.get("decisions") or [row]:
+                        keys = list(decision["criteria"])
+                        if decision["choice"] not in keys:
+                            raise ValueError("Replay choice is missing from its recorded candidates")
+                        suffix = f":{decision['channel']}" if row.get("decisions") else ""
+                        cases.append({"case_id": f"{ep['episode_id']}:{row['step']}{suffix}",
+                            "source": "successful_model_episode", "state": dumps(decision["state"]),
+                            "questions": [{"key": "action", "mode": "choice",
+                                           "instructions": instructions_for(decision["state"], INSTRUCTIONS),
+                                           "options": keys, "criteria": decision["criteria"]}],
+                            "gold": {"action": [float(k == decision["choice"]) for k in keys]},
+                            "provenance": {"group": ep["group"], "task": ep["task"], "seed": ep["seed"],
+                                           "episode_success": True, "episode_id": ep["episode_id"],
+                                           "source_policy": ep.get("source_policy"),
+                                           "scene_distribution": ep.get("scene_distribution", "upstream-default"),
+                                           "scene_config": ep.get("scene_config"), "execution": episode_execution(ep),
+                                           "channel": decision.get("channel", "action"),
+                                           "choice": decision["choice"], "label_source": "completed_episode_return"}})
+                        if trace:
+                            trace("trajectory_filter", {"case_id": cases[-1]["case_id"], "accepted": True,
+                                  "reason": "executed_action_from_successful_model_episode",
+                                  "provenance": cases[-1]["provenance"]})
+    for split in ("train", "dev", "test"):
+        (output / f"{split}.jsonl").write_text("".join(dumps(c) + "\n" for c in cases) if split == "train" else "")
+    manifest = {"schema_version": 1, "objective": "successful_episode_replay",
+                "selection": "executed actions from model episodes with terminal success=1",
+                "episodes_total": total, "successful_episodes": successes, "failed_episodes": total - successes,
+                "success_rate": successes / total if total else 0., "groups": groups,
+                "filtered_failure_actions": filtered,
+                "cases": {"train": len(cases), "dev": 0, "test": 0},
+                "development": "independent complete tasks, not single-step labels",
+                "sha256": {s: hashlib.sha256((output / f"{s}.jsonl").read_bytes()).hexdigest()
+                           for s in ("train", "dev", "test")}}
+    if selected_execution is not None:
+        manifest["execution"] = selected_execution
+    write_json(output / "manifest.json", manifest)
+    if trace:
+        trace("filter_summary", {"dataset": str(output), **manifest})
+    return manifest
+
+
+def fit_successes(store, learner, dataset, steps=100, dev_start=1010000, dev_episodes=3,
+                  seed_start=1000000, batch_size=16, backend="rsi", initialization=False,
+                  randomize_scene=False, tasks=None, max_steps=20):
+    from .process_log import trace_episode
+    tasks = tuple(tasks or TASKS)
+    dataset = Path(dataset).resolve()
+    manifest = json.loads((dataset / "manifest.json").read_text())
+    if hashlib.sha256((dataset / "train.jsonl").read_bytes()).hexdigest() != manifest["sha256"]["train"]:
+        raise ValueError("Success replay dataset checksum mismatch")
+    cases = [json.loads(line) for line in (dataset / "train.jsonl").read_text().splitlines() if line]
+    if not cases:
+        raise ValueError("No successful model trajectories; train is skipped")
+    if any(manifest["groups"].get(f"{task}:{seed}:0") in {"train", "dev"}
+           for task in tasks for seed in range(dev_start, dev_start + dev_episodes)):
+        raise ValueError("Development scenes overlap replay training data")
+    from .episode_protocol import replay_protocol
+    learner.episode_protocol = replay_protocol(cases)
+    objective = "supervised_initialization" if initialization else "successful_episode_replay"
+    config = {"objective": objective, "steps": steps, "batch_size": batch_size,
+              "lr": learner.lr, "randomize_scene": randomize_scene, "tasks": list(tasks),
+              "max_steps": max_steps, "episode_protocol": learner.episode_protocol,
+              "dataset": str(dataset), "dataset_sha256": manifest["sha256"],
+              "train_seed_range": [seed_start, seed_start + 10000],
+              "dev_seed_range": [dev_start, dev_start + dev_episodes]}
+    run = store.create("initialize" if initialization else "self-train", backend, config)
+    store.event(run, "fit_started", {**config, "samples": len(cases), "manifest": manifest})
+    directory = store.run_dir(run)
+    started = time.perf_counter()
+    parameters = None
+    try:
+        with Monitor(store, run) as monitor:
+            if backend == "rsi":
+                from .parameter_history import ParameterRecorder
+                parameters = ParameterRecorder(learner.model, directory)
+            def validate(step):
+                rows = [episode(task, seed, learner, max_steps=max_steps, label_mode="none", randomize_scene=randomize_scene,
+                                trace=trace_episode(store, run, model_role="development", training_step=step)) for task in tasks
+                        for seed in range(dev_start, dev_start + dev_episodes)]
+                score = task_score(rows)
+                monitor.metric(step, dev_success_rate=score[0], dev_risk_count=-score[1])
+                return score
+            initial = best_score = validate(0)
+            best, best_step = learner.snapshot(), 0
+            encoded = []
+            for index, c in enumerate(cases):
+                row = {"state": json.loads(c["state"]), "criteria": c["questions"][0]["criteria"]}
+                if not initialization and not c["provenance"].get("episode_success"):
+                    raise ValueError("Only successful episode actions may enter self imitation")
+                encoded.append((learner.encode_success(row), int(np.argmax(c["gold"]["action"]))))
+                if index % 10 == 0:
+                    monitor.metric(0, encoded_samples=index + 1, training_samples=len(cases))
+            rng = np.random.default_rng(seed_start)
+            for step in range(1, steps + 1):
+                batch = [encoded[i] for i in rng.integers(len(encoded), size=batch_size)]
+                metrics = learner.imitate(batch)
+                if parameters:
+                    parameters.capture(step)
+                monitor.metric(step, **metrics, training_samples=len(cases),
+                               successful_episodes=manifest.get("successful_episodes", 0),
+                               steps_per_second=step / (time.perf_counter() - started))
+                if step % 25 == 0 or step == steps:
+                    score = validate(step)
+                    if score > best_score:
+                        best_score, best, best_step = score, learner.snapshot(), step
+                    elif score[0] < best_score[0] - .05:
+                        monitor.alert("task_completion_regression", "任务完成率下降，保留之前的模型")
+            learner.restore(best)
+            if parameters:
+                parameters.capture(best_step, "selected_checkpoint")
+            if hashlib.sha256((dataset / "train.jsonl").read_bytes()).hexdigest() != manifest["sha256"]["train"]:
+                raise ValueError("Successful trajectory data changed during training")
+            summary = {"objective": objective, "initial_success_rate": initial[0],
+                       "success_rate": best_score[0], "selected_step": best_step,
+                       "training_samples": len(cases), "successful_episodes": manifest.get("successful_episodes", 0),
+                       "checkpoint": str(directory / "checkpoint"),
+                       "train_seconds": time.perf_counter() - started}
+            learner.save(directory / "checkpoint", {**config, **summary})
+            store.event(run, "checkpoint_selected", summary)
+            write_json(directory / "summary.json", summary)
+        store.finish(run, summary=summary)
+        return run
+    except BaseException as exc:
+        store.finish(run, "cancelled" if isinstance(exc, KeyboardInterrupt) else "failed",
+                     {"error": type(exc).__name__, "message": str(exc)[:1000]})
+        raise
+
+
+def self_improve(store, rounds=2, episodes=90, steps=100, checkpoint=None, backend="rsi",
+                 revision=None, seed_start=0, explore_episodes=None, replay_only=False, tasks=None,
+                 randomize_scene=False, max_steps=20, dev_episodes=10, execution=None):
+    """Explore, replay successful trajectories, select by task success, deploy if better."""
+    from .execution import execution_settings
+    from .episode_protocol import episode_protocol
+    requested_execution = execution_settings(execution) if execution is not None else None
+    if backend == "compact" and requested_execution and requested_execution["control_mode"] != "skills":
+        raise ValueError("逐步／分层 XYZ 自主训练需要本地 RSI 模型")
+    tasks = tuple(tasks or ("transfer",))
+    if not tasks or len(set(tasks)) != len(tasks) or not set(tasks) <= set(TASKS):
+        raise ValueError("Invalid self-improvement task scope")
+    if episodes < 30 or episodes > 300 or episodes * len(tasks) < 90 or steps < 1 or steps > 20000:
+        raise ValueError("Need 30–300 scenes per task and 1–20000 replay updates")
+    if backend == "rsi" and checkpoint is None and revision is None:
+        revision = "f9248caceb89caf2e6c968ea33bf0d6eb7f957b0"
+    explore_episodes = explore_episodes or episodes
+    if not 1 <= explore_episodes <= 300:
+        raise ValueError("Exploration budget must be 1–300 scenes per task")
+    run = store.create("self-improve", backend, {"objective": "successful_episode_replay", "rounds": rounds,
+        "episodes": episodes, "explore_episodes": explore_episodes,
+        "steps": steps, "checkpoint": str(checkpoint), "revision": revision,
+        "replay_only": replay_only, "tasks": list(tasks), "max_steps": max_steps, "execution": requested_execution,
+        "scene_distribution": "workspace-random-v1" if randomize_scene else "upstream-default"})
+    results, files, collections = [], [], set()
+    # Replay actual previous successful model data; failed episodes remain available to inspect.
+    for prior in store.runs(limit=None):
+        file = store.run_dir(prior["id"]) / "episodes.jsonl"
+        if prior["kind"] == "explore" and prior["backend"] == backend and file.exists():
+            files.append(file)
+    try:
+        with Monitor(store, run):
+            for index in range(rounds):
+                deployed = current(store, backend)
+                active = current(store)
+                if not deployed and active:
+                    active_meta = json.loads((Path(active["checkpoint"]) / "meta.json").read_text())
+                    if (active_meta.get("backend") == "compact-numpy") == (backend == "compact"):
+                        deployed = active
+                parent = checkpoint
+                if not parent and deployed:
+                    meta = json.loads((Path(deployed["checkpoint"]) / "meta.json").read_text())
+                    if (meta.get("backend") == "compact-numpy") == (backend == "compact"):
+                        parent = deployed["checkpoint"]
+                reserve_after = seed_start
+                if parent and (Path(parent) / "meta.json").exists():
+                    reserve_after = max(reserve_after, json.loads((Path(parent) / "meta.json").read_text()).get("reserved_through", 0))
+                suite = reserve_suite(store, reserve_after)
+                if backend == "rsi":
+                    from .task_rsi import RSILearner
+                    learner = RSILearner(parent or "v1.0-0.8b", revision=revision)
+                else:
+                    learner = CompactLearner(parent, .08)
+                settings = requested_execution or episode_protocol(learner).get("execution")
+                if settings is not None:
+                    learner.episode_protocol = {**episode_protocol(learner), "execution": settings,
+                        "staged_prompts": episode_protocol(learner)["staged_prompts"] and settings["control_mode"] == "skills"}
+                # The frozen tower is shared; baseline and candidate have separate
+                # heads. This preserves the exact initial model at much lower cost.
+                if backend == "rsi":
+                    parent_head = copy.deepcopy(learner.model.scorer).eval()
+                    parent_policy = FrozenParentPolicy(learner, parent_head)
+                    parent_path = str(learner.parent)
+                else:
+                    parent_policy = copy.deepcopy(learner.policy)
+                    parent_path = str(parent or "untrained-compact")
+                from .process_log import trace_episode
+                collection = store.create("explore", backend, {"checkpoint": str(parent or "v1.0-0.8b"),
+                    "mode": "existing_model_replay" if replay_only else "sampled_model_actions",
+                    "scene_suite": suite, "round": index + 1, "execution": settings})
+                collections.add(collection)
+                store.event(run, "stage", {"stage": "exploring", "round": index + 1, "collection": collection})
+                rng = np.random.default_rng(suite["train"])
+                from .exploration import ExplorationMemory, ExploringPolicy
+                memory = ExplorationMemory(store, backend)
+                memory.import_past()
+                exploratory = ExploringPolicy(learner, memory)
+                complete, count = 0, 0
+                with Monitor(store, collection), (store.run_dir(collection) / "episodes.jsonl").open("w") as output:
+                    for task in (() if replay_only else tasks):
+                        for seed in range(suite["train"], suite["train"] + explore_episodes):
+                            result = episode(task, seed, exploratory, label_mode="none", rng=rng,
+                                trace=trace_episode(store, collection, model_role="exploration", checkpoint=str(parent)),
+                                             replay_directory=store.run_dir(collection) / "replays",
+                                             randomize_scene=randomize_scene, max_steps=max_steps)
+                            result.update(source_policy=backend, checkpoint=str(parent or "v1.0-0.8b"))
+                            result["exploration_update"] = memory.observe(result)
+                            output.write(dumps(result) + "\n")
+                            output.flush()
+                            complete += int(result["success"])
+                            count += 1
+                            store.event(collection, "episode", {k: v for k, v in result.items() if k != "records"})
+                            Monitor(store, collection).metric(count, exploration_success_rate=complete / count,
+                                                             successful_episodes=complete, episodes=count)
+                store.finish(collection, summary={"episodes": count, "successful_episodes": complete,
+                                                  "success_rate": complete / count if count else None, "failed_episodes": count - complete})
+                files.append(store.run_dir(collection) / "episodes.jsonl")
+                dataset = store.root / "datasets" / f"success-{collection}"
+                from .process_log import trace_episode
+                manifest = success_dataset(files, dataset, tasks, trace=trace_episode(store, run, round=index + 1),
+                                           execution=execution_settings(settings))
+                result = {"round": index + 1, "collection": collection, "dataset": str(dataset),
+                          "exploration_success_rate": complete / count if count else None,
+                          "successful_episodes": manifest["successful_episodes"], "scene_suite": suite}
+                if not manifest["cases"]["train"]:
+                    result["status"] = "no_success_data"
+                    store.event(run, "alert", {"code": "no_success_trajectories", "severity": "warning",
+                        "message": "RSI 探索暂未完成任务，没有成功轨迹可训练；保留全部失败记录，需要继续探索或初始化"})
+                else:
+                    store.event(run, "stage", {"stage": "success_replay_training", "round": index + 1})
+                    training = fit_successes(store, learner, dataset, steps, suite["dev"], seed_start=suite["train"],
+                                             backend=backend, randomize_scene=randomize_scene, tasks=tasks,
+                                             dev_episodes=dev_episodes, max_steps=max_steps)
+                    path = store.run_dir(training) / "checkpoint"
+                    meta = json.loads((path / "meta.json").read_text())
+                    meta.update(reserved_through=suite["release"] + 10000, scene_suite=suite)
+                    write_json(path / "meta.json", meta)
+                    # An explicit parent may differ from the deployed model; in
+                    # that case release evidence must still target the deployment.
+                    if deployed and parent and Path(parent).resolve() != Path(deployed["checkpoint"]).resolve():
+                        old = load_policy(deployed["checkpoint"])
+                        old_name = deployed["checkpoint"]
+                    else:
+                        old, old_name = parent_policy, parent_path
+                    store.event(run, "stage", {"stage": "independent_evaluation", "round": index + 1})
+                    candidate = None
+                    try:
+                        candidate = load_policy(path)
+                        evaluation = evaluate(store, candidate, path, old, old_name, list(tasks),
+                                              range(suite["release"], suite["release"] + episodes),
+                                              dataset=dataset, randomize_scene=randomize_scene, max_steps=max_steps,
+                                              candidate_reloaded=True, execution=settings)
+                    finally:
+                        if hasattr(candidate, "close"):
+                            candidate.close()
+                        if hasattr(old, "close"):
+                            old.close()
+                    report = store.run_dir(evaluation) / "report.json"
+                    report_data = json.loads(report.read_text())
+                    store.event(run, "release_gate", {"round": index + 1, "evaluation": evaluation,
+                                "candidate_checkpoint": str(path), **report_data})
+                    result.update(training=training, evaluation=evaluation, success_rate=report_data["success_rate"],
+                                  parent_success_rate=report_data["champion_success_rate"])
+                    if report_data["gate"]["passed"]:
+                        store.event(run, "stage", {"stage": "deploying", "round": index + 1})
+                        registry = backend if current(store, backend) else None
+                        if registry is None and current(store) and not deployed:
+                            registry = backend
+                        result["deployment"] = deploy(store, report, (deployed or {}).get("sha256"),
+                                                      registry_backend=registry)["version"]
+                        result["status"] = "deployed"
+                        checkpoint = str(path)
+                    else:
+                        result["status"] = "retained_current_model"
+                results.append(result)
+                write_json(store.root / "self-improve-latest.json", results)
+                store.event(run, "stage", {"stage": "completed", "round": index + 1, "status": result["status"]})
+                device = getattr(learner, "device", None)
+                # Both wrappers retain the tower; drop them before loading the next round.
+                del learner, parent_policy, exploratory
+                old = candidate = None
+                if backend == "rsi":
+                    del parent_head
+                    from .devices import release_unused_memory
+                    release_unused_memory(device)
+        store.finish(run, summary={"rounds": results})
+        return results
+    except BaseException as exc:
+        for child in store.runs(limit=None):
+            if child["id"] in collections and child["status"] == "running":
+                store.finish(child["id"], "cancelled" if isinstance(exc, KeyboardInterrupt) else "failed",
+                             {"error": str(exc)[:1000]})
+        store.finish(run, "cancelled" if isinstance(exc, KeyboardInterrupt) else "failed",
+                     {"error": type(exc).__name__, "message": str(exc)[:1000], "rounds": results})
+        raise
