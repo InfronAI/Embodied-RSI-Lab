@@ -19,7 +19,7 @@ EMBODIED_TEST_PYTHON="$PWD/.venv/bin/python" npm run test:ui
 EMBODIED_TEST_PYTHON="$PWD/.venv/bin/python" npm run test:lab-ui
 ```
 
-Set `MUJOCO_GL=osmesa` for headless Linux. Browser tests start their own services on 8099 and 8098, use in-memory connection storage, and write ignored test artifacts. Never point them at a live training store. Additional lint/style diagnostics can be run separately; the CI lint gate focuses on syntax and unresolved names in the integrated codebase.
+Set `MUJOCO_GL=osmesa` for headless Linux. Browser tests start their own services on 8099 and 8098, use in-memory connection storage, and write ignored test artifacts. Never point them at a live training store. Additional lint/style diagnostics can be run separately; the validation lint gate focuses on syntax and unresolved names in the integrated codebase.
 
 Before publication, stage the intended changes and run:
 
@@ -39,4 +39,4 @@ See [SECURITY.md](SECURITY.md) for excluded content. Local credentials, deployme
 - Do not report candidate probabilities as physical success rates, or training loss as independent improvement.
 - Keep copyright and asset licenses intact. New dependencies retain their original licenses.
 
-The optional gallery can be built with `npm run build:site`. Its GitHub Pages workflow is manual so uploading source does not publish a separate website automatically.
+The optional gallery can be built with `npm run build:site`. Validation and manual GitHub Pages workflows are provided as [opt-in templates](docs/ci/README.md). They require workflow-write permission to activate; uploading this source does not enable them or publish a separate website automatically.

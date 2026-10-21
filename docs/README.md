@@ -12,6 +12,7 @@ Start with the current guides below. The Web UI includes a bilingual Docs worksp
 | [DGX Spark deployment](../deploy/spark/README.md) | GPU、渲染、systemd、反向代理与维护 |
 | [Contributing](../CONTRIBUTING.md) | 开发、测试和提交约定 |
 | [Security and publication](../SECURITY.md) | 敏感信息隔离、扫描和发布范围 |
+| [Optional CI templates](ci/README.md) | 自动验证与手动 Pages 发布；需授权启用 |
 
 ## Detailed references
 
