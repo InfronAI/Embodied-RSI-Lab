@@ -4,7 +4,13 @@
 
 [English](README.md) · [文档索引](docs/README.md) · [安装运行](docs/INSTALLATION.md) · [架构与数据流程](docs/ARCHITECTURE.md) · [学习与复现](docs/LEARNING_GUIDE.md)
 
+https://github.com/user-attachments/assets/89e57879-7f9e-4feb-a852-8389ca887714
+
+**自进化训练实录 · 61 秒。** 展示 DGX Spark 的实时采集与决策日志，以及已记录的训练曲线和独立评测结果。[下载 MP4](docs/media/self-evolving-training.mp4) · [录制说明](docs/media/self-evolving-training.json)。
+
 模型读取观测并选择动作，MuJoCo 执行物理仿真，系统记录完整轨迹，从成功经验中拟合决策头。候选模型通过独立评测后才会部署，继续下一轮探索。
+
+**选择动作、执行动作、完成任务是三件事。** 闭爪可能空抓，物体到达目标盘也可能尚未稳定。工作台串联模型输入、物理反馈和最终结果，让研究者能解释失败，并判断训练是否提高了任务完成率。
 
 本项目融合两个开源项目：[embodied-jev](https://github.com/FBddcz/embodied-jev) 提供模型接口、感知、动作协议和物理实验；[embodied-rsi](https://github.com/gaohuan2020/embodied-rsi) 提供轨迹采集、筛选、训练、评测和部署。`embodied_lab` 是统一入口。保留 Python 包名以区分职责，**运行时只需一个服务，所有功能位于 `/simulation`**。
 
@@ -20,14 +26,92 @@
 
 默认英文，顶部可切换中文。过程日志覆盖**感知、决策、轨迹过滤、拟合训练、评测与部署**，支持查看原始记录。
 
-## 理解自进化训练
+## 核心概念
 
-**观测 → 模型决策 → 物理执行 → 完整轨迹 → 成功动作筛选 → 决策头拟合 → 开发场景选点 → 独立配对评测 → 部署或保留旧模型。**
+**两个闭环，共用一条证据链：**
 
-- **训练损失下降不等于能力提升**：完整任务完成率用于开发选点，独立场景用于发布判断。
-- **采集成功率不等于独立测试成功率**：它们来自不同场景与运行阶段。
-- **探索策略变化不等于参数更新**：只有实际拟合步骤才修改权重。
-- 默认任务为搬运入盘；堆叠和越障存在于底层仿真及实验工具中。单任务成绩不能证明其他任务或真机表现。
+- **局内循环：** 观测、决策、执行，再读取物理反馈。一局内固定模型版本；探索调整动作的采样方式。
+- **跨局循环：** 筛选经验、拟合候选、评测，再决定是否部署。训练更新权重；新发布的模型从下一局开始生效。
+
+默认方法是**按结果筛选的自模仿学习**：完整成功局中符合条件的模型动作成为训练目标，编码器保持冻结，仅训练决策头。失败轨迹仍保留，用于诊断和探索。
+
+## 从业务到系统，再到数据
+
+### 1. 业务流程图：研究者如何开展实验
+
+**实验条件 = 模型 + 任务 + 场景 + 执行配置。** 模型测试解释单个模型的行为；模型对比在一致条件下衡量差异；自进化训练产生并评测新的本地 checkpoint。
+
+```mermaid
+flowchart TB
+  Setup["确定任务、场景与成功条件"] --> Config["选择模型、动作、观测与相机"]
+  Config --> Test["模型测试"]
+  Config --> Compare["模型对比"]
+  Config --> Train["自进化训练"]
+  Test --> Inspect["检查决策与物理结果"]
+  Compare --> Benchmark["在一致条件下比较表现"]
+  Train --> Iterate["采集 · 筛选 · 拟合 · 评测"]
+  Iterate --> Release["发布决策<br/>发布候选或保留当前模型"]
+  Inspect --> Evidence["证据与报告<br/>日志 · 回放 · 指标 · 数据来源"]
+  Benchmark --> Evidence
+  Release --> Evidence
+  Release -->|下一局| Train
+```
+
+### 2. 系统架构图：各模块如何分工
+
+浏览器访问同一个 Python 服务。**`embodied_lab` 统一启动，`embodied_jev` 负责模型交互与物理执行，`embodied_rsi` 管理学习与部署。** 模型工作进程使用独立的 Python 环境。
+
+```mermaid
+flowchart TB
+  UI["浏览器 · /simulation<br/>配置 · 测试 · 对比 · 训练 · 文档"] --> App["embodied_lab<br/>统一启动与 FastAPI 应用"]
+  App --> JEV["embodied_jev · /workbench/api<br/>模型适配、感知与动作协议"]
+  App --> RSI["embodied_rsi · /api 与 /v1/systemone<br/>采集、训练、评测与部署"]
+  JEV --> Models["本地模型端点 / 远端 API"]
+  JEV --> Physics["共享 MuJoCo 仿真实现<br/>Franka Panda · 接触 · 状态 / RGB-D"]
+  RSI --> Physics
+  RSI --> Workers["独立 RSI 推理与训练进程<br/>.venv-rsi · PyTorch"]
+  JEV --> Store["持久化证据<br/>SQLite 事件 · 轨迹 · checkpoint · 报告"]
+  RSI --> Store
+  Workers --> Store
+```
+
+各工作区复用物理与动作实现，实验会话保持独立。远端 API 可用于模型测试和对比；当前训练闭环更新**本地 RSI 决策头**。
+
+### 3. 数据流程图：经验如何变成可部署模型
+
+观测与决策经过物理执行形成证据。符合条件的成功动作进入模仿训练，开发场景选出 checkpoint，再由**独立未见场景判断是否发布**。
+
+```mermaid
+flowchart TB
+  subgraph Episode["局内：执行与记录"]
+    direction LR
+    Observe["观测 +<br/>允许的候选动作"] --> Decide["模型选择 +<br/>请求元数据"]
+    Decide --> Execute["校验动作<br/>MuJoCo 执行"]
+    Execute -->|物理反馈| Observe
+    Execute --> Record["逐步记录 +<br/>整局结果"]
+  end
+  subgraph Learning["跨局：拟合与选点"]
+    direction LR
+    Filter["合格的成功<br/>模型动作"] --> Dataset["训练样本 +<br/>来源清单"]
+    Dataset --> Fit["冻结编码器<br/>拟合决策头"]
+    Fit --> Dev["开发场景<br/>选择 checkpoint"]
+  end
+  subgraph Validation["发布：评测与校验"]
+    direction LR
+    Eval["独立未见场景配对评测<br/>候选模型对比参考模型"] --> Gate{"提升与风险检查通过？"}
+    Gate -->|是| Deploy["校验、加载并预热<br/>更新注册表"]
+    Gate -->|否| Keep["保留当前部署"]
+  end
+  Episode -->|完整轨迹| Learning
+  Learning -->|选定 checkpoint| Validation
+  Validation --> Next["下一局使用活动部署版本"]
+```
+
+**训练损失下降不足以决定发布。** 评测在相同的独立场景上比较候选模型与参考模型，检查完成率提升及风险。采集成功率、开发成绩和独立评测结果各自衡量不同阶段。
+
+复现时保留运行与局 ID、模型哈希、场景种子、执行配置和数据来源。详细接口与发布校验见[架构文档](docs/ARCHITECTURE.md)；启动后打开 `/simulation#docs`，可阅读交互图和分步讲解。
+
+默认任务为**搬运入盘**，研究范围是受约束的桌面仿真。任务、候选动作和部分几何辅助由程序定义。堆叠和越障存在于底层仿真及实验工具中；单任务成绩不能证明其他任务或真机表现。
 
 ## 安装和启动
 

@@ -1,0 +1,52 @@
+{
+  "title": "Self-Evolving Training walkthrough",
+  "recorded_at": "2026-10-21T06:31:14.551Z",
+  "source": "Read-only browser capture of the workbench running on DGX Spark",
+  "scope": "Live collection and logs alongside previously recorded training and independent evaluation results; not a single newly completed training cycle.",
+  "release_outcome_shown": "The recorded candidate did not pass all release checks; the current deployment was retained.",
+  "video": "self-evolving-training.mp4",
+  "github_video_url": "https://github.com/user-attachments/assets/89e57879-7f9e-4feb-a852-8389ca887714",
+  "duration_seconds": 61.44,
+  "width": 1600,
+  "height": 1080,
+  "codec": "H.264",
+  "playback_speed": 1,
+  "sha256": "45807c6ae27ea2ac26689cb3abf6f077da3e8770a3f2077257786728d1a3924f",
+  "editing": [
+    "Removed initial page loading",
+    "Added chapter captions",
+    "Compressed to H.264; no experiment metrics or outcomes were changed"
+  ],
+  "chapters": [
+    {
+      "start_seconds": 0.0,
+      "title": "01 / Live perception, decisions and physics",
+      "description": "Self-Evolving Training on DGX Spark - actual model choices and MuJoCo execution."
+    },
+    {
+      "start_seconds": 18.99,
+      "title": "02 / Trace every stage",
+      "description": "Live perception, model requests, action selection and execution are recorded."
+    },
+    {
+      "start_seconds": 27.66,
+      "title": "03 / Inspect filtering evidence",
+      "description": "Filtering events expose action validation and the evidence used by the learning loop."
+    },
+    {
+      "start_seconds": 33.85,
+      "title": "04 / Inspect recorded training updates",
+      "description": "Historical training curves: successful trajectories fit the decision head."
+    },
+    {
+      "start_seconds": 44.89,
+      "title": "05 / Evaluate before deploying",
+      "description": "Recorded paired results: this candidate did not pass all release checks."
+    },
+    {
+      "start_seconds": 55.23,
+      "title": "06 / Continue with the active model",
+      "description": "One fixed model version per episode; accepted updates apply to later episodes."
+    }
+  ]
+}

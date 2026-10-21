@@ -4,7 +4,13 @@
 
 [中文说明](README.zh-CN.md) · [Documentation](docs/README.md) · [Installation](docs/INSTALLATION.md) · [Architecture](docs/ARCHITECTURE.md) · [Learning & reproduction](docs/LEARNING_GUIDE.md)
 
+https://github.com/user-attachments/assets/89e57879-7f9e-4feb-a852-8389ca887714
+
+**Self-Evolving Training in action · 61 seconds.** Live collection and decision logs, followed by recorded training curves and independent evaluation on DGX Spark. [Download MP4](docs/media/self-evolving-training.mp4) · [Recording details](docs/media/self-evolving-training.json).
+
 Embodied RSI Lab connects model decisions to a Franka Panda arm in MuJoCo, records what actually happens, and learns from successful trajectories. A candidate model becomes the deployed model only after independent evaluation passes the release checks.
+
+**Choosing an action, executing it, and completing a task are separate events.** A gripper can close without grasping; an object can reach the tray without staying there. The workbench connects model inputs, physical feedback, and final outcomes so researchers can explain failures and measure whether learning improves task completion.
 
 The project integrates [embodied-jev](https://github.com/FBddcz/embodied-jev), which supplies model adapters, perception, action protocols, and physics, with [embodied-rsi](https://github.com/gaohuan2020/embodied-rsi), which supplies collection, filtering, training, evaluation, and deployment. The Python package names preserve those responsibilities. **One service serves the entire application at `/simulation`.**
 
@@ -20,27 +26,92 @@ The project integrates [embodied-jev](https://github.com/FBddcz/embodied-jev), w
 
 The UI defaults to **English**, with **中文** available in the top navigation. Process logs cover perception, decisions, filtering, training, evaluation, and deployment; detailed records remain available alongside summaries.
 
-## How the learning loop works
+## Core concepts
+
+**Two loops share one chain of evidence:**
+
+- **Within an episode:** observe, choose, execute, and observe the physical result. One model version stays fixed throughout the episode; exploration changes action sampling.
+- **Across episodes:** filter experience, fit a candidate, evaluate it, and decide whether to deploy. Training updates weights; a newly deployed version takes effect in the next episode.
+
+The default learning method is **outcome-filtered self-imitation**: eligible model actions from complete successful episodes become training targets. The encoder stays frozen while the decision head learns. Failed trajectories remain available for diagnosis and exploration.
+
+## From business workflow to system and data
+
+### 1. Business workflow — what the researcher does
+
+**Experiment = model + task + scene + execution settings.** Testing explains one model's behavior; comparison measures differences under matched settings; Self-Evolving Training produces and evaluates new local checkpoints.
 
 ```mermaid
-flowchart LR
-  O[Observe] --> D[Model chooses action]
-  D --> P[MuJoCo executes]
-  P --> T[Record complete trajectories]
-  T --> F[Filter successful model actions]
-  F --> L[Fit decision head]
-  L --> V[Select on development scenes]
-  V --> E[Independent paired evaluation]
-  E --> G{Release checks pass?}
-  G -->|Yes| R[Verify and deploy checkpoint]
-  G -->|No| K[Keep current deployment]
-  R --> O
-  K --> O
+flowchart TB
+  Setup["Define task, scenes and success rules"] --> Config["Choose model, actions, observations and cameras"]
+  Config --> Test["Model test"]
+  Config --> Compare["Model comparison"]
+  Config --> Train["Self-Evolving Training"]
+  Test --> Inspect["Inspect decisions and physical results"]
+  Compare --> Benchmark["Compare under matched settings"]
+  Train --> Iterate["Collect · filter · fit · evaluate"]
+  Iterate --> Release["Release decision<br/>Publish candidate or retain current model"]
+  Inspect --> Evidence["Evidence and reports<br/>Logs · replay · metrics · provenance"]
+  Benchmark --> Evidence
+  Release --> Evidence
+  Release -->|Next episode| Train
+```
+
+### 2. System architecture — which modules do the work
+
+The browser uses one Python service. **`embodied_lab` starts the application; `embodied_jev` handles model interaction and physics; `embodied_rsi` manages learning and deployment.** Model workers run in a separate Python environment.
+
+```mermaid
+flowchart TB
+  UI["Browser · /simulation<br/>Configure · Test · Compare · Train · Docs"] --> App["embodied_lab<br/>Launcher and unified FastAPI application"]
+  App --> JEV["embodied_jev · /workbench/api<br/>Model adapters, perception and action protocols"]
+  App --> RSI["embodied_rsi · /api and /v1/systemone<br/>Collection, training, evaluation and deployment"]
+  JEV --> Models["Local endpoints / remote APIs"]
+  JEV --> Physics["Shared MuJoCo simulation code<br/>Franka Panda · contacts · state / RGB-D"]
+  RSI --> Physics
+  RSI --> Workers["Isolated RSI inference and training workers<br/>.venv-rsi · PyTorch"]
+  JEV --> Store["Persistent evidence<br/>SQLite events · trajectories · checkpoints · reports"]
+  RSI --> Store
+  Workers --> Store
+```
+
+The workspaces share physics and action implementations while keeping their experiment sessions separate. Remote APIs support model testing and comparison; the current training loop updates a **local RSI decision head**.
+
+### 3. Data flow — how experience becomes a deployed model
+
+Observations and decisions produce physical evidence. Only eligible successful actions become imitation targets; development scenes select a checkpoint, and **separate held-out scenes determine release**.
+
+```mermaid
+flowchart TB
+  subgraph Episode["Episode: act and record"]
+    direction LR
+    Observe["Observation +<br/>allowed candidates"] --> Decide["Model choice +<br/>request metadata"]
+    Decide --> Execute["Validate and execute<br/>in MuJoCo"]
+    Execute -->|Physical feedback| Observe
+    Execute --> Record["Step records +<br/>episode outcome"]
+  end
+  subgraph Learning["Learning: fit and select"]
+    direction LR
+    Filter["Eligible successful<br/>model actions"] --> Dataset["Training samples +<br/>provenance manifest"]
+    Dataset --> Fit["Fit decision head<br/>with frozen encoder"]
+    Fit --> Dev["Development scenes<br/>select checkpoint"]
+  end
+  subgraph Validation["Release: evaluate and verify"]
+    direction LR
+    Eval["Paired held-out evaluation<br/>Candidate vs reference"] --> Gate{"Gain and risk checks pass?"}
+    Gate -->|Yes| Deploy["Verify, load and warm<br/>Update registry"]
+    Gate -->|No| Keep["Retain current deployment"]
+  end
+  Episode -->|Completed trajectories| Learning
+  Learning -->|Selected checkpoint| Validation
+  Validation --> Next["Next episode uses the active deployment"]
 ```
 
 **Lower training loss is not sufficient for deployment.** The evaluator compares candidate and reference on matched, held-out scenes and checks success gains and risk metrics. Collection success, development performance, and release evaluation are different measurements.
 
-The default task is **transfer into a tray**. Stack and barrier tasks are available in the underlying simulator and experimental tools; a transfer-only result does not establish performance on those tasks or on real hardware.
+To reproduce a result, retain run and episode IDs, model hashes, scene seeds, execution settings, and dataset provenance. See the [architecture reference](docs/ARCHITECTURE.md) for detailed routes and release checks, or open **Docs** at `/simulation#docs` for interactive diagrams and a guided explanation.
+
+The default task is **transfer into a tray**, within constrained tabletop simulation. Tasks, candidate actions, and some geometric assistance are defined by the program. Stack and barrier tasks are available in the underlying simulator and experimental tools; a transfer-only result does not establish performance on those tasks or on real hardware.
 
 ## Install and start
 
